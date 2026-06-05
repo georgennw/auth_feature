@@ -7,9 +7,12 @@ abstract class AuthRepo {
     required String email,
     required String pass,
   });
-  // Future<Result<User, AuthRepo>> signUp({
-  //   required String email,
-  //   required String pass,
-  // });
+  Future<Result<User, AuthFailure>> register({
+    required String username,
+    required String email,
+    required String pass,
+    required String gender,
+    required String age,
+  });
   // Future<Result<User, AuthRepo>> forgotPassword({required String email});
 }

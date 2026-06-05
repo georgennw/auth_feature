@@ -1,25 +1,27 @@
+import 'package:auth/core/l10n/app_localizations.dart';
+
 class Validator {
-  static String? email(String? value) {
+  static String? email(String? value, AppLocalizations l10n) {
     if (value == null || value.isEmpty) {
-      return 'Email is required';
+      return l10n.errorEmailRequired;
     }
 
     final regex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 
     if (!regex.hasMatch(value)) {
-      return 'Invalid email format';
+      return l10n.errorEmailInvalid;
     }
 
     return null;
   }
 
-  static String? password(String? value) {
+  static String? password(String? value, AppLocalizations l10n) {
     if (value == null || value.isEmpty) {
-      return 'Password is required';
+      return l10n.errorPasswordRequired;
     }
 
     if (value.length < 8 || value.length > 24) {
-      return 'Password must be 8-24 characters';
+      return l10n.errorPasswordLength;
     }
 
     final hasUpper = value.contains(RegExp(r'[A-Z]'));
@@ -28,31 +30,31 @@ class Validator {
     final hasSpecial = value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
 
     if (!hasUpper) {
-      return 'Password needs an uppercase letter';
+      return l10n.errorPasswordUppercase;
     }
 
     if (!hasLower) {
-      return 'Password needs a lowercase letter';
+      return l10n.errorPasswordLowercase;
     }
 
     if (!hasDigit) {
-      return 'Password needs a digit';
+      return l10n.errorPasswordDigit;
     }
 
     if (!hasSpecial) {
-      return 'Password needs a special character';
+      return l10n.errorPasswordSpecial;
     }
 
     return null;
   }
 
-  static String? repeatPassword(String? password, String? repeat) {
+  static String? repeatPassword(String? password, String? repeat, AppLocalizations l10n) {
     if (repeat == null || repeat.isEmpty) {
-      return 'Repeat password is required';
+      return l10n.errorRepeatPasswordRequired;
     }
 
     if (password != repeat) {
-      return 'Passwords do not match';
+      return l10n.errorPasswordsDoNotMatch;
     }
     
     return null;

@@ -1,7 +1,7 @@
 import 'package:auth/core/utils/result.dart';
 import 'package:auth/features/auth/domain/usecases/sign_in_usecases.dart';
-import 'package:auth/features/auth/presentation/%20bloc/sign_in_event.dart';
-import 'package:auth/features/auth/presentation/%20bloc/sign_in_state.dart';
+import 'package:auth/features/auth/presentation/bloc/sign_in_event.dart';
+import 'package:auth/features/auth/presentation/bloc/sign_in_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignInBloc extends Bloc<SignInEvent, SignInState> {
