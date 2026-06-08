@@ -22,7 +22,7 @@ void main() {
     MultiRepositoryProvider(
       providers: [
         RepositoryProvider<Validator>.value(value: const Validator()),
-        RepositoryProvider<AuthRepo>.value(value: authRepository),
+        RepositoryProvider<AuthRepository>.value(value: authRepository),
         RepositoryProvider<SignInUseCase>.value(value: signInUseCase),
         RepositoryProvider<RegisterUseCase>.value(value: registerUseCase),
       ],
@@ -55,7 +55,7 @@ void main() {
   );
 }
 
-class MockAuthRepository implements AuthRepo {
+class MockAuthRepository implements AuthRepository {
   @override
   Future<Result<User, AuthFailure>> signIn({
     required String email,

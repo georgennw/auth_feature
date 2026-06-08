@@ -4,9 +4,9 @@ import 'package:auth/features/auth/domain/failure/auth_failure.dart';
 import 'package:auth/features/auth/domain/repo/auth_repo.dart';
 
 class SignInUseCase {
-  final AuthRepo _authRepository;
+  final AuthRepository _authRepository;
 
-  SignInUseCase(this._authRepository);
+  const SignInUseCase(this._authRepository);
 
   Future<Result<User, AuthFailure>> execute({
     required String email,

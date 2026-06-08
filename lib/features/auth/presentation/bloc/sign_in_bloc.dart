@@ -17,9 +17,9 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
 
   void _onFieldsChanged(SignInFieldsChanged event, Emitter<SignInState> emit) {
     final isEmailValid =
-        _validator.email(event.email.trim(), event.l10n) == null;
+        _validator.email(event.email.trim()) == null;
     final isPasswordValid =
-        _validator.password(event.password, event.l10n) == null;
+        _validator.password(event.password, );
 
     final isActive = isEmailValid && isPasswordValid;
 

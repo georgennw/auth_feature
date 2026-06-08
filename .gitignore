@@ -12,7 +12,7 @@
 .swiftpm/
 migrate_working_dir/
 .metadata
-pubspeck.lock
+pubspec.lock
 
 # IntelliJ related
 *.iml

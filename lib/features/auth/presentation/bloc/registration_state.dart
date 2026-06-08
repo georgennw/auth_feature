@@ -13,7 +13,7 @@ class RegistrationLoading extends RegistrationState {}
 
 class RegistrationSuccess extends RegistrationState {
   final User user;
-  RegistrationSuccess(this.user);
+  const RegistrationSuccess(this.user);
 
   @override
   List<Object?> get props => [user];

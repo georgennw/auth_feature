@@ -21,7 +21,6 @@ class Validator {
       return l10n.errorPasswordRequired;
     }
 
-    // Избавились от магических чисел 8 и 24
     if (value.length < ValidationConstants.minPasswordLength ||
         value.length > ValidationConstants.maxPasswordLength) {
       return l10n.errorPasswordLength;
