@@ -1,5 +1,6 @@
 import 'package:auth/core/l10n/app_localizations.dart';
 import 'package:auth/core/utils/result.dart';
+import 'package:auth/core/validator/validator.dart';
 import 'package:auth/features/auth/domain/entities/user.dart';
 import 'package:auth/features/auth/domain/failure/auth_failure.dart';
 import 'package:auth/features/auth/domain/repo/auth_repo.dart';
@@ -13,15 +14,16 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   final authRepository = MockAuthRepository();
-  final signInUseCase = SignInUsecase(authRepository);
-  final registerUseCase = RegisterUsecase(authRepository);
+  final signInUseCase = SignInUseCase(authRepository);
+  final registerUseCase = RegisterUseCase(authRepository);
 
   runApp(
     MultiBlocProvider(
       providers: [
+        RepositoryProvider<Validator>.value(value: const Validator(),),
         RepositoryProvider<AuthRepo>.value(value: authRepository,),
-        RepositoryProvider<SignInUsecase>.value(value: signInUseCase,),
-        RepositoryProvider<RegisterUsecase>.value(value: registerUseCase,),
+        RepositoryProvider<SignInUseCase>.value(value: signInUseCase,),
+        RepositoryProvider<RegisterUseCase>.value(value: registerUseCase,),
       ],
       child: BlocProvider(
       create: (_) => SignInBloc(signInUseCase),

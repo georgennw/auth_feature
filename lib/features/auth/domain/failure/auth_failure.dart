@@ -1,9 +1,10 @@
 import 'package:equatable/equatable.dart';
 
-sealed class AuthFailure extends Equatable{
+sealed class AuthFailure extends Equatable {
   final String message;
 
   const AuthFailure(this.message);
+
   @override
   List<Object?> get props => [message];
 }

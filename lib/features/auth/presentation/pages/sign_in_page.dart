@@ -41,11 +41,12 @@ class _SignInPageState extends State<SignInPage> {
 
   void _validateForm() {
     final l10n = AppLocalizations.of(context)!;
+    final validator = context.read<Validator>();
 
     final isEmailValid =
-        Validator.email(_emailController.text.trim(), l10n) == null;
+        validator.email(_emailController.text.trim(), l10n) == null;
     final isPasswordValid =
-        Validator.password(_passwordController.text, l10n) == null;
+        validator.password(_passwordController.text, l10n) == null;
 
     if ((isEmailValid && isPasswordValid) != _isButtonActive) {
       setState(() {
@@ -96,6 +97,7 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final validator = context.read<Validator>();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -104,7 +106,6 @@ class _SignInPageState extends State<SignInPage> {
           builder: (context, state) {
             final isLoading = state is SignInLoading;
             final isError = state is SignInError;
-
             return Column(
               children: [
                 Expanded(
@@ -143,7 +144,7 @@ class _SignInPageState extends State<SignInPage> {
                           TextFormField(
                             controller: _emailController,
                             enabled: !isLoading,
-                            validator: (value) => Validator.email(value, l10n),
+                            validator: (value) => validator.email(value, l10n),
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
                             decoration: _fieldDecoration(
@@ -165,7 +166,7 @@ class _SignInPageState extends State<SignInPage> {
                             enabled: !isLoading,
                             obscureText: true,
                             validator: (value) =>
-                                Validator.password(value, l10n),
+                                validator.password(value, l10n),
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
                             decoration:
@@ -258,7 +259,7 @@ class _SignInPageState extends State<SignInPage> {
                                     MaterialPageRoute(
                                       builder: (_) => BlocProvider(
                                         create: (context) => RegistrationBloc(
-                                          context.read<RegisterUsecase>(),
+                                          context.read<RegisterUseCase>(),
                                         ),
                                         child: const RegistrationPage(),
                                       ),

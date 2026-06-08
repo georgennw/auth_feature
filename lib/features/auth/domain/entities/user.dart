@@ -8,6 +8,4 @@ class User extends Equatable{
   
   @override
   List<Object?> get props => [email, password];
-
-
 }

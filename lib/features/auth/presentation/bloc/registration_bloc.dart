@@ -5,7 +5,7 @@ import 'package:auth/features/auth/presentation/bloc/registration_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
-  final RegisterUsecase _registerUsecase;
+  final RegisterUseCase _registerUsecase;
 
   RegistrationBloc(this._registerUsecase) : super(RegistrationInitial()) {
     on<RegistrationSubmitted>(_onSubmitted);

@@ -48,13 +48,22 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   void _validateForm() {
     final l10n = AppLocalizations.of(context)!;
+    final validator = context.read<Validator>();
+
     final isUsernameValid = _usernameController.text.trim().isNotEmpty;
-    final isEmailValid = Validator.email(_emailController.text.trim(), l10n) == null;
-    final isPasswordValid = Validator.password(_passwordController.text, l10n) == null;
+    final isEmailValid =
+        validator.email(_emailController.text.trim(), l10n) == null;
+    final isPasswordValid =
+        validator.password(_passwordController.text, l10n) == null;
     final isGenderValid = (_gender ?? '').isNotEmpty;
     final isAgeValid = _ageController.text.trim().isNotEmpty;
 
-    final next = isUsernameValid && isEmailValid && isPasswordValid && isGenderValid && isAgeValid;
+    final next =
+        isUsernameValid &&
+        isEmailValid &&
+        isPasswordValid &&
+        isGenderValid &&
+        isAgeValid;
 
     if (next != _isButtonActive) {
       setState(() => _isButtonActive = next);
@@ -65,24 +74,30 @@ class _RegistrationPageState extends State<RegistrationPage> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     final gender = _gender ?? '';
     context.read<RegistrationBloc>().add(
-          RegistrationSubmitted(
-            username: _usernameController.text.trim(),
-            email: _emailController.text.trim(),
-            password: _passwordController.text,
-            gender: gender,
-            age: _ageController.text.trim(),
-          ),
-        );
+      RegistrationSubmitted(
+        username: _usernameController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        gender: gender,
+        age: _ageController.text.trim(),
+      ),
+    );
   }
 
-  InputDecoration _fieldDecoration({required String hintText, Widget? suffixIcon, bool isServerError = false}) {
+  InputDecoration _fieldDecoration({
+    required String hintText,
+    Widget? suffixIcon,
+    bool isServerError = false,
+  }) {
     return InputDecoration(
       hintText: hintText,
       suffixIcon: suffixIcon,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: isServerError ? Colors.red.shade400 : Colors.grey.shade400),
+        borderSide: BorderSide(
+          color: isServerError ? Colors.red.shade400 : Colors.grey.shade400,
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -98,10 +113,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+    final validator = context.read<Validator>();
+
     return BlocConsumer<RegistrationBloc, RegistrationState>(
       listener: (context, state) {
         if (state is RegistrationSuccess) {
@@ -119,7 +136,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
               children: [
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0,
+                      vertical: 16.0,
+                    ),
                     child: Form(
                       key: _formKey,
                       child: Column(
@@ -130,54 +150,103 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           else
                             const SizedBox(height: 10),
                           IconButton(
-                            onPressed: isLoading ? null : () => Navigator.of(context).pop(),
-                            icon: const Icon(Icons.arrow_back_ios, color: Colors.blue),
+                            onPressed: isLoading
+                                ? null
+                                : () => Navigator.of(context).pop(),
+                            icon: const Icon(
+                              Icons.arrow_back_ios,
+                              color: Colors.blue,
+                            ),
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(),
                           ),
                           const SizedBox(height: 24),
                           Text(
                             l10n.providePersonalInfo,
-                            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, height: 1.2),
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              height: 1.2,
+                            ),
                           ),
                           const SizedBox(height: 32),
-                          Text(l10n.username, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          Text(
+                            l10n.username,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           const SizedBox(height: 8),
                           TextFormField(
                             controller: _usernameController,
                             enabled: !isLoading,
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
-                            validator: (v) => (v == null || v.trim().isEmpty) ? l10n.errUsernameRequired : null,
-                            decoration: _fieldDecoration(hintText: l10n.hintUsername, isServerError: isError),
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            validator: (v) => (v == null || v.trim().isEmpty)
+                                ? l10n.errUsernameRequired
+                                : null,
+                            decoration: _fieldDecoration(
+                              hintText: l10n.hintUsername,
+                              isServerError: isError,
+                            ),
                           ),
                           const SizedBox(height: 20),
 
-                          Text(l10n.email, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          Text(
+                            l10n.email,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           const SizedBox(height: 8),
                           TextFormField(
                             controller: _emailController,
                             enabled: !isLoading,
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
-                            validator: (v) => Validator.email(v, l10n),
-                            decoration: _fieldDecoration(hintText: l10n.hintEmail, isServerError: isError),
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            validator: (v) => validator.email(v, l10n),
+                            decoration: _fieldDecoration(
+                              hintText: l10n.hintEmail,
+                              isServerError: isError,
+                            ),
                           ),
                           const SizedBox(height: 20),
                           Row(
                             children: [
-                              Text(l10n.password, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                              Text(
+                                l10n.password,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                               const SizedBox(width: 6),
                               Tooltip(
                                 message: l10n.passwordTooltip,
                                 padding: const EdgeInsets.all(12),
-                                margin: const EdgeInsets.symmetric(horizontal: 24),
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                ),
                                 triggerMode: TooltipTriggerMode.tap,
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFEBF5FF),
                                   borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: Colors.blue.shade100),
+                                  border: Border.all(
+                                    color: Colors.blue.shade100,
+                                  ),
                                 ),
-                                textStyle: const TextStyle(color: Colors.black, fontSize: 13, height: 1.3),
-                                child: const Icon(Icons.info_outline, color: Colors.blue, size: 18),
+                                textStyle: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 13,
+                                  height: 1.3,
+                                ),
+                                child: const Icon(
+                                  Icons.info_outline,
+                                  color: Colors.blue,
+                                  size: 18,
+                                ),
                               ),
                             ],
                           ),
@@ -186,46 +255,91 @@ class _RegistrationPageState extends State<RegistrationPage> {
                             controller: _passwordController,
                             enabled: !isLoading,
                             obscureText: !_showPassword,
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
-                            validator: (v) => Validator.password(v, l10n),
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            validator: (v) => validator.password(v, l10n),
                             decoration: _fieldDecoration(
                               hintText: l10n.hintPassword,
                               isServerError: isError,
                               suffixIcon: IconButton(
-                                onPressed: isLoading ? null : () => setState(() => _showPassword = !_showPassword),
-                                icon: Icon(_showPassword ? Icons.visibility : Icons.visibility_off, color: Colors.grey),
+                                onPressed: isLoading
+                                    ? null
+                                    : () => setState(
+                                        () => _showPassword = !_showPassword,
+                                      ),
+                                icon: Icon(
+                                  _showPassword
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: Colors.grey,
+                                ),
                               ),
                             ),
                           ),
                           const SizedBox(height: 20),
 
-                          Text(l10n.gender, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          Text(
+                            l10n.gender,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           const SizedBox(height: 8),
                           DropdownButtonFormField<String>(
                             initialValue: _gender,
                             items: [
-                              DropdownMenuItem(value: 'male', child: Text(l10n.genderMale)),
-                              DropdownMenuItem(value: 'female', child: Text(l10n.genderFemale)),
-                              DropdownMenuItem(value: 'other', child: Text(l10n.genderOther)),
+                              DropdownMenuItem(
+                                value: 'male',
+                                child: Text(l10n.genderMale),
+                              ),
+                              DropdownMenuItem(
+                                value: 'female',
+                                child: Text(l10n.genderFemale),
+                              ),
+                              DropdownMenuItem(
+                                value: 'other',
+                                child: Text(l10n.genderOther),
+                              ),
                             ],
-                            onChanged: isLoading ? null : (v) {
-                              setState(() => _gender = v);
-                              _validateForm();
-                            },
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
-                            validator: (v) => (v == null || v.isEmpty) ? l10n.errGenderRequired : null,
-                            decoration: _fieldDecoration(hintText: l10n.hintGender, isServerError: isError),
+                            onChanged: isLoading
+                                ? null
+                                : (v) {
+                                    setState(() => _gender = v);
+                                    _validateForm();
+                                  },
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            validator: (v) => (v == null || v.isEmpty)
+                                ? l10n.errGenderRequired
+                                : null,
+                            decoration: _fieldDecoration(
+                              hintText: l10n.hintGender,
+                              isServerError: isError,
+                            ),
                           ),
                           const SizedBox(height: 20),
-                          Text(l10n.age, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          Text(
+                            l10n.age,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           const SizedBox(height: 8),
                           TextFormField(
                             controller: _ageController,
                             enabled: !isLoading,
                             keyboardType: TextInputType.number,
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
-                            validator: (v) => (v == null || v.trim().isEmpty) ? l10n.errAgeRequired : null,
-                            decoration: _fieldDecoration(hintText: l10n.hintAge, isServerError: isError),
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            validator: (v) => (v == null || v.trim().isEmpty)
+                                ? l10n.errAgeRequired
+                                : null,
+                            decoration: _fieldDecoration(
+                              hintText: l10n.hintAge,
+                              isServerError: isError,
+                            ),
                           ),
                         ],
                       ),
@@ -233,7 +347,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 24.0, right: 24.0, bottom: 20.0, top: 10.0),
+                  padding: const EdgeInsets.only(
+                    left: 24.0,
+                    right: 24.0,
+                    bottom: 20.0,
+                    top: 10.0,
+                  ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -244,14 +363,24 @@ class _RegistrationPageState extends State<RegistrationPage> {
                             ? const Center(child: CircularProgressIndicator())
                             : ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: _isButtonActive ? const Color(0xFF007FFF) : const Color(0xFF90CFFF).withValues(alpha: 0.5),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+                                  backgroundColor: _isButtonActive
+                                      ? const Color(0xFF007FFF)
+                                      : const Color(
+                                          0xFF90CFFF,
+                                        ).withValues(alpha: 0.5),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(100),
+                                  ),
                                   elevation: 0,
                                 ),
                                 onPressed: _isButtonActive ? _submit : null,
                                 child: Text(
                                   l10n.register,
-                                  style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                       ),
@@ -259,17 +388,26 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(l10n.textAlreadyHaveAccount, style: const TextStyle(fontSize: 15)),
+                          Text(
+                            l10n.textAlreadyHaveAccount,
+                            style: const TextStyle(fontSize: 15),
+                          ),
                           GestureDetector(
-                            onTap: isLoading ? null : () => Navigator.of(context).pop(),
+                            onTap: isLoading
+                                ? null
+                                : () => Navigator.of(context).pop(),
                             child: Text(
                               l10n.linkSignIn,
-                              style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 15),
+                              style: const TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 10,),
+                      const SizedBox(height: 10),
                     ],
                   ),
                 ),
@@ -294,7 +432,16 @@ class _RegistrationPageState extends State<RegistrationPage> {
         children: [
           const Icon(Icons.error_outline, color: Color(0xFFE53E3E), size: 22),
           const SizedBox(width: 12),
-          Expanded(child: Text(message, style: const TextStyle(color: Color(0xFFE53E3E), fontSize: 15, height: 1.3))),
+          Expanded(
+            child: Text(
+              message,
+              style: const TextStyle(
+                color: Color(0xFFE53E3E),
+                fontSize: 15,
+                height: 1.3,
+              ),
+            ),
+          ),
         ],
       ),
     );

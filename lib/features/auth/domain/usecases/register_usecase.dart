@@ -3,10 +3,10 @@ import 'package:auth/features/auth/domain/entities/user.dart';
 import 'package:auth/features/auth/domain/failure/auth_failure.dart';
 import 'package:auth/features/auth/domain/repo/auth_repo.dart';
 
-class RegisterUsecase {
-  final AuthRepo _repo;
+class RegisterUseCase {
+  final AuthRepo _authRepository;
 
-  RegisterUsecase(this._repo);
+  RegisterUseCase(this._authRepository);
 
   Future<Result<User, AuthFailure>> call({
     required String username,
@@ -14,8 +14,8 @@ class RegisterUsecase {
     required String pass,
     required String gender,
     required String age,
-  }) async {
-    return await _repo.register(
+  }) {
+    return _authRepository.register(
       username: username,
       email: email,
       pass: pass,

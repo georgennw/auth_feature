@@ -5,7 +5,7 @@ import 'package:auth/features/auth/presentation/bloc/sign_in_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignInBloc extends Bloc<SignInEvent, SignInState> {
-  final SignInUsecase _signInUsecase;
+  final SignInUseCase _signInUsecase;
 
   SignInBloc(this._signInUsecase) : super(SignInInitial()) {
     on<SignInSubmitted>(_onSubmitted);
