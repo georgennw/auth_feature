@@ -3,26 +3,64 @@ import 'package:auth/features/auth/domain/failure/auth_failure.dart';
 import 'package:equatable/equatable.dart';
 
 sealed class SignInState extends Equatable {
+  final bool isButtonActive;
+
+  const SignInState({this.isButtonActive = false});
+
+  SignInState copyWith({bool? isButtonActive});
+
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [isButtonActive];
 }
 
-class SignInInitial extends SignInState {}
+class SignInInitial extends SignInState {
+  const SignInInitial({super.isButtonActive});
 
-class SignInLoading extends SignInState {}
+  @override
+  SignInInitial copyWith({bool? isButtonActive}) {
+    return SignInInitial(isButtonActive: isButtonActive ?? this.isButtonActive);
+  }
+}
+
+class SignInLoading extends SignInState {
+  const SignInLoading({super.isButtonActive});
+
+  @override
+  SignInLoading copyWith({bool? isButtonActive}) {
+    return SignInLoading(isButtonActive: isButtonActive ?? this.isButtonActive);
+  }
+}
 
 class SignInSuccess extends SignInState {
   final User user;
-  SignInSuccess(this.user);
+
+  const SignInSuccess(this.user, {super.isButtonActive});
 
   @override
-  List<Object?> get props => [user];
+  SignInSuccess copyWith({bool? isButtonActive}) {
+    return SignInSuccess(
+      user,
+      isButtonActive: isButtonActive ?? this.isButtonActive,
+    );
+  }
+
+  @override
+  List<Object?> get props => [user, isButtonActive];
 }
 
 class SignInError extends SignInState {
   final AuthFailure failure;
-  SignInError(this.failure);
+
+  const SignInError(this.failure, {super.isButtonActive});
 
   @override
-  List<Object?> get props => [failure];
+  SignInError copyWith({bool? isButtonActive}) {
+    return SignInError(
+      failure,
+      isButtonActive: isButtonActive ?? this.isButtonActive,
+    );
+  }
+
+  @override
+  List<Object?> get props => [failure, isButtonActive];
 }

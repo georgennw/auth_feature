@@ -1,4 +1,5 @@
 import 'package:auth/core/l10n/app_localizations.dart';
+import 'package:auth/core/theme/app_colors.dart';
 import 'package:auth/core/validator/validator.dart';
 import 'package:auth/features/auth/domain/usecases/register_usecase.dart';
 import 'package:auth/features/auth/presentation/bloc/registration_bloc.dart';
@@ -6,6 +7,7 @@ import 'package:auth/features/auth/presentation/bloc/sign_in_bloc.dart';
 import 'package:auth/features/auth/presentation/bloc/sign_in_event.dart';
 import 'package:auth/features/auth/presentation/bloc/sign_in_state.dart';
 import 'package:auth/features/auth/presentation/pages/registration_page.dart';
+import 'package:auth/features/auth/presentation/widgets/error_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -55,7 +57,7 @@ class _SignInPageState extends State<SignInPage> {
     }
   }
 
-  void _submit() {
+  void _submit(BuildContext context) {
     if (_formKey.currentState?.validate() ?? false) {
       context.read<SignInBloc>().add(
         SignInSubmitted(
@@ -106,6 +108,8 @@ class _SignInPageState extends State<SignInPage> {
           builder: (context, state) {
             final isLoading = state is SignInLoading;
             final isError = state is SignInError;
+            final isButtonActive = state.isButtonActive;
+
             return Column(
               children: [
                 Expanded(
@@ -120,7 +124,7 @@ class _SignInPageState extends State<SignInPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           if (isError)
-                            _buildErrorBanner(state.failure.message)
+                            ErrorBanner(message: state.failure.message)
                           else
                             const SizedBox(height: 20),
                           const SizedBox(height: 24),
@@ -223,21 +227,21 @@ class _SignInPageState extends State<SignInPage> {
                             ? const Center(child: CircularProgressIndicator())
                             : ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: _isButtonActive
-                                      ? const Color(0xFF007FFF)
-                                      : const Color(
-                                          0xFF90CFFF,
-                                        ).withValues(alpha: 0.5),
+                                  backgroundColor: isButtonActive
+                                      ? AppColors.buttonActive
+                                      : AppColors.buttonInactive,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(100),
                                   ),
                                   elevation: 0,
                                 ),
-                                onPressed: _isButtonActive ? _submit : null,
+                                onPressed: isButtonActive
+                                    ? () => _submit(context)
+                                    : null,
                                 child: Text(
                                   l10n.buttonSignIn,
                                   style: const TextStyle(
-                                    color: Colors.white,
+                                    color: AppColors.white,
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -283,34 +287,6 @@ class _SignInPageState extends State<SignInPage> {
             );
           },
         ),
-      ),
-    );
-  }
-
-  Widget _buildErrorBanner(String message) {
-    return Container(
-      margin: const EdgeInsets.only(top: 10, bottom: 10),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFDE8E8),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(Icons.error_outline, color: Color(0xFFE53E3E), size: 22),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              message,
-              style: const TextStyle(
-                color: Color(0xFFE53E3E),
-                fontSize: 15,
-                height: 1.3,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

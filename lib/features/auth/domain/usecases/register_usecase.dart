@@ -8,13 +8,13 @@ class RegisterUseCase {
 
   RegisterUseCase(this._authRepository);
 
-  Future<Result<User, AuthFailure>> call({
+  Future<Result<User, AuthFailure>> execute({
     required String username,
     required String email,
     required String pass,
     required String gender,
     required String age,
-  }) {
+  }) async {
     return _authRepository.register(
       username: username,
       email: email,

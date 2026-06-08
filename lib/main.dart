@@ -6,6 +6,7 @@ import 'package:auth/features/auth/domain/failure/auth_failure.dart';
 import 'package:auth/features/auth/domain/repo/auth_repo.dart';
 import 'package:auth/features/auth/domain/usecases/register_usecase.dart';
 import 'package:auth/features/auth/domain/usecases/sign_in_usecases.dart';
+import 'package:auth/features/auth/presentation/bloc/registration_bloc.dart';
 import 'package:auth/features/auth/presentation/bloc/sign_in_bloc.dart';
 import 'package:auth/features/auth/presentation/pages/sign_in_page.dart';
 import 'package:flutter/material.dart';
@@ -18,30 +19,39 @@ void main() {
   final registerUseCase = RegisterUseCase(authRepository);
 
   runApp(
-    MultiBlocProvider(
+    MultiRepositoryProvider(
       providers: [
-        RepositoryProvider<Validator>.value(value: const Validator(),),
-        RepositoryProvider<AuthRepo>.value(value: authRepository,),
-        RepositoryProvider<SignInUseCase>.value(value: signInUseCase,),
-        RepositoryProvider<RegisterUseCase>.value(value: registerUseCase,),
+        RepositoryProvider<Validator>.value(value: const Validator()),
+        RepositoryProvider<AuthRepo>.value(value: authRepository),
+        RepositoryProvider<SignInUseCase>.value(value: signInUseCase),
+        RepositoryProvider<RegisterUseCase>.value(value: registerUseCase),
       ],
-      child: BlocProvider(
-      create: (_) => SignInBloc(signInUseCase),
-      child: MaterialApp(
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => SignInBloc(
+              context.read<SignInUseCase>(),
+              context.read<Validator>(),
+            ),
+          ),
+          BlocProvider(
+            create: (context) =>
+                RegistrationBloc(context.read<RegisterUseCase>()),
+          ),
         ],
-        supportedLocales: const [
-          Locale('en', ''),
-          Locale('ru', ''),
-        ],
-        home: const SignInPage()
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [Locale('en', ''), Locale('ru', '')],
+          home: const SignInPage(),
         ),
+      ),
     ),
-      )
   );
 }
 

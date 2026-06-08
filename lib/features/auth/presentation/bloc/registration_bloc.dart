@@ -16,7 +16,7 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
     Emitter<RegistrationState> emit,
   ) async {
     emit(RegistrationLoading());
-    final result = await _registerUsecase(
+    final result = await _registerUsecase.execute(
       username: event.username,
       email: event.email,
       pass: event.password,

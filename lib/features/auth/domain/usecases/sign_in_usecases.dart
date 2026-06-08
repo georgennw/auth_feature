@@ -8,10 +8,10 @@ class SignInUseCase {
 
   SignInUseCase(this._authRepository);
 
-  Future<Result<User, AuthFailure>> call({
+  Future<Result<User, AuthFailure>> execute({
     required String email,
     required String pass,
-  }) {
+  }) async {
     return _authRepository.signIn(email: email, pass: pass);
   }
 }
