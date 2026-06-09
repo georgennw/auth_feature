@@ -5,44 +5,45 @@ class Validator {
   const Validator();
 
   String? email(String? value, AppLocalizations l10n) {
-    if (value == null || value.isEmpty) {
-      return l10n.errorEmailRequired;
-    }
-
-    if (!ValidationRegex.email.hasMatch(value)) {
-      return l10n.errorEmailInvalid;
-    }
-
+    if (value == null || value.isEmpty) return l10n.errorEmailRequired;
+    if (!ValidationRegex.email.hasMatch(value)) return l10n.errorEmailInvalid;
+    
     return null;
   }
 
   String? password(String? value, AppLocalizations l10n) {
-    if (value == null || value.isEmpty) {
-      return l10n.errorPasswordRequired;
-    }
-
+    if (value == null || value.isEmpty) return l10n.errorPasswordRequired;
     if (value.length < ValidationConstants.minPasswordLength ||
         value.length > ValidationConstants.maxPasswordLength) {
       return l10n.errorPasswordLength;
     }
-
-    if (!value.contains(ValidationRegex.uppercase)) {
-      return l10n.errorPasswordUppercase;
-    }
-
-    if (!value.contains(ValidationRegex.lowercase)) {
-      return l10n.errorPasswordLowercase;
-    }
-
-    if (!value.contains(ValidationRegex.digit)) {
-      return l10n.errorPasswordDigit;
-    }
-
-    if (!value.contains(ValidationRegex.specialChar)) {
-      return l10n.errorPasswordSpecial;
-    }
+    if (!value.contains(ValidationRegex.uppercase)) return l10n.errorPasswordUppercase;
+    if (!value.contains(ValidationRegex.lowercase)) return l10n.errorPasswordLowercase;
+    if (!value.contains(ValidationRegex.digit)) return l10n.errorPasswordDigit;
+    if (!value.contains(ValidationRegex.specialChar)) return l10n.errorPasswordSpecial;
 
     return null;
+  }
+
+  bool isEmailValid(String? value) {
+    if (value == null || value.isEmpty) return false;
+
+    return ValidationRegex.email.hasMatch(value.trim());
+  }
+
+  bool isPasswordValid(String? value) {
+    if (value == null || value.isEmpty) return false;
+
+    if (value.length < ValidationConstants.minPasswordLength ||
+        value.length > ValidationConstants.maxPasswordLength) {
+      return false;
+    }
+    if (!value.contains(ValidationRegex.uppercase)) return false;
+    if (!value.contains(ValidationRegex.lowercase)) return false;
+    if (!value.contains(ValidationRegex.digit)) return false;
+    if (!value.contains(ValidationRegex.specialChar)) return false;
+
+    return true;
   }
 
   String? repeatPassword(

@@ -35,8 +35,10 @@ void main() {
             ),
           ),
           BlocProvider(
-            create: (context) =>
-                RegistrationBloc(context.read<RegisterUseCase>()),
+            create: (context) => RegistrationBloc(
+              context.read<RegisterUseCase>(),
+              context.read<Validator>(),
+            ),
           ),
         ],
         child: MaterialApp(

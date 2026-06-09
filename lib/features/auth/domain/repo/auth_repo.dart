@@ -7,6 +7,7 @@ abstract interface class AuthRepository {
     required String email,
     required String pass,
   });
+
   Future<Result<User, AuthFailure>> register({
     required String username,
     required String email,

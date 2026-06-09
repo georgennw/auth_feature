@@ -16,11 +16,8 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
   }
 
   void _onFieldsChanged(SignInFieldsChanged event, Emitter<SignInState> emit) {
-    final isEmailValid =
-        _validator.email(event.email.trim()) == null;
-    final isPasswordValid =
-        _validator.password(event.password, );
-
+    final isEmailValid = _validator.isEmailValid(event.email);
+    final isPasswordValid = _validator.isPasswordValid(event.password);
     final isActive = isEmailValid && isPasswordValid;
 
     emit(state.copyWith(isButtonActive: isActive));

@@ -1,26 +1,24 @@
 import 'package:equatable/equatable.dart';
 
 sealed class AuthFailure extends Equatable {
-  final String message;
-
-  const AuthFailure(this.message);
+  const AuthFailure();
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [];
 }
 
 class InvalidCredentialsFailure extends AuthFailure {
-  const InvalidCredentialsFailure() : super('Wrong login or password');
+  const InvalidCredentialsFailure();
 }
 
 class EmailAlreadyInUseFailure extends AuthFailure {
-  const EmailAlreadyInUseFailure() : super('Email already in sue');
+  const EmailAlreadyInUseFailure();
 }
 
 class UserNotFoundFailure extends AuthFailure {
-  const UserNotFoundFailure() : super('User nor found');
+  const UserNotFoundFailure();
 }
 
 class NetworkFailure extends AuthFailure {
-  const NetworkFailure() : super('Network failure');
+  const NetworkFailure();
 }
