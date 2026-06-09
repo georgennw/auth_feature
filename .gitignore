@@ -13,9 +13,9 @@
 migrate_working_dir/
 .metadata
 pubspec.lock
-.lib/core/l10n/app_localizations_en.dart
-.lib/core/l10n/app_localizations_ru.dart
-.lib/core/l10n/app_localizations.dart
+lib/core/l10n/app_localizations_en.dart
+lib/core/l10n/app_localizations_ru.dart
+lib/core/l10n/app_localizations.dart
 
 # IntelliJ related
 *.iml
