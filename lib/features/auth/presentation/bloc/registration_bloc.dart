@@ -1,5 +1,7 @@
 import 'package:auth/core/utils/result.dart';
-import 'package:auth/core/validator/validator.dart';
+import 'package:auth/core/validator/validator_rules.dart';
+import 'package:auth/features/auth/domain/entities/user.dart';
+import 'package:auth/features/auth/domain/failure/auth_failure.dart';
 import 'package:auth/features/auth/domain/usecases/register_usecase.dart';
 import 'package:auth/features/auth/presentation/bloc/registration_event.dart';
 import 'package:auth/features/auth/presentation/bloc/registration_state.dart';
@@ -7,10 +9,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
   final RegisterUseCase _registerUseCase;
-  final Validator _validator;
 
-  RegistrationBloc(this._registerUseCase, this._validator)
-    : super(const RegistrationInitial()) {
+  RegistrationBloc(this._registerUseCase) : super(const RegistrationInitial()) {
     on<RegistrationFieldsChanged>(_onFieldsChanged);
     on<RegistrationSubmitted>(_onSubmitted);
   }
@@ -19,11 +19,11 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
     RegistrationFieldsChanged event,
     Emitter<RegistrationState> emit,
   ) {
-    final bool isUsernameValid = event.username.trim().isNotEmpty;
-    final bool isEmailValid = _validator.isEmailValid(event.email);
-    final bool isPasswordValid = _validator.isPasswordValid(event.password);
-    final bool isGenderValid = event.gender.isNotEmpty;
-    final bool isAgeValid = event.age.trim().isNotEmpty;
+    final bool isUsernameValid = event.username.isValidUsername;
+    final bool isEmailValid = event.email.isValidEmail;
+    final bool isPasswordValid = event.password.isValidPassword;
+    final bool isGenderValid = event.gender.isValidGender;
+    final bool isAgeValid = event.age.isValidAge;
 
     final bool isActive =
         isUsernameValid &&
@@ -32,16 +32,23 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
         isGenderValid &&
         isAgeValid;
 
-    emit(state.copyWith(isButtonActive: isActive));
+    emit(
+      state.copyWith(isButtonActive: isActive, selectedGender: event.gender),
+    );
   }
 
   Future<void> _onSubmitted(
     RegistrationSubmitted event,
     Emitter<RegistrationState> emit,
   ) async {
-    emit(RegistrationLoading(isButtonActive: state.isButtonActive));
+    emit(
+      RegistrationLoading(
+        isButtonActive: state.isButtonActive,
+        selectedGender: state.selectedGender,
+      ),
+    );
 
-    final result = await _registerUseCase.execute(
+    final Result<User, AuthFailure> result = await _registerUseCase.execute(
       username: event.username,
       email: event.email,
       pass: event.password,
@@ -50,10 +57,22 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
     );
 
     switch (result) {
-      case Success(value: final user):
-        emit(RegistrationSuccess(user, isButtonActive: state.isButtonActive));
-      case FailureResult(failure: final failure):
-        emit(RegistrationError(failure, isButtonActive: state.isButtonActive));
+      case Success(value: final User user):
+        emit(
+          RegistrationSuccess(
+            user,
+            isButtonActive: state.isButtonActive,
+            selectedGender: state.selectedGender,
+          ),
+        );
+      case FailureResult(failure: final AuthFailure failure):
+        emit(
+          RegistrationError(
+            failure,
+            isButtonActive: state.isButtonActive,
+            selectedGender: state.selectedGender,
+          ),
+        );
     }
   }
 }

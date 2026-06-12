@@ -1,6 +1,6 @@
 import 'package:auth/core/l10n/app_localizations.dart';
 import 'package:auth/core/theme/app_colors.dart';
-import 'package:auth/core/validator/validator.dart';
+import 'package:auth/core/validator/validator_ext.dart';
 import 'package:auth/features/auth/presentation/bloc/sign_in_bloc.dart';
 import 'package:auth/features/auth/presentation/bloc/sign_in_event.dart';
 import 'package:auth/features/auth/presentation/bloc/sign_in_state.dart';
@@ -20,29 +20,23 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _emailController.addListener(() {
-      context.read<SignInBloc>().add(
-        SignInFieldsChanged(
-          email: _emailController.text,
-          password: _passwordController.text,
-        ),
-      );
-    });
-    _passwordController.addListener(() {
-      context.read<SignInBloc>().add(
-        SignInFieldsChanged(
-          email: _emailController.text,
-          password: _passwordController.text,
-        ),
-      );
-    });
+    _emailController.addListener(_onSignInFieldsChanged);
+    _passwordController.addListener(_onSignInFieldsChanged);
+  }
+
+  void _onSignInFieldsChanged() {
+    context.read<SignInBloc>().add(
+      SignInFieldsChanged(
+        email: _emailController.text,
+        password: _passwordController.text,
+      ),
+    );
   }
 
   @override
@@ -58,7 +52,7 @@ class _SignInPageState extends State<SignInPage> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: BlocBuilder<SignInBloc, SignInState>(
-          builder: (context, state) {
+          builder: (BuildContext context, SignInState state) {
             final bool isLoading = state is SignInLoading;
             final bool isError = state is SignInError;
             final String errorMessage = isError
@@ -66,7 +60,7 @@ class _SignInPageState extends State<SignInPage> {
                 : '';
 
             return Column(
-              children: [
+              children: <Widget>[
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(
@@ -74,7 +68,6 @@ class _SignInPageState extends State<SignInPage> {
                       vertical: 16.0,
                     ),
                     child: _FormSection(
-                      formKey: _formKey,
                       emailController: _emailController,
                       passwordController: _passwordController,
                       isLoading: isLoading,
@@ -94,14 +87,12 @@ class _SignInPageState extends State<SignInPage> {
                     isLoading: isLoading,
                     isButtonActive: state.isButtonActive,
                     onSubmit: () {
-                      if (_formKey.currentState?.validate() ?? false) {
-                        context.read<SignInBloc>().add(
-                          SignInSubmitted(
-                            email: _emailController.text.trim(),
-                            password: _passwordController.text,
-                          ),
-                        );
-                      }
+                      context.read<SignInBloc>().add(
+                        SignInSubmitted(
+                          email: _emailController.text.trim(),
+                          password: _passwordController.text,
+                        ),
+                      );
                     },
                   ),
                 ),
@@ -115,7 +106,6 @@ class _SignInPageState extends State<SignInPage> {
 }
 
 class _FormSection extends StatefulWidget {
-  final GlobalKey<FormState> formKey;
   final TextEditingController emailController;
   final TextEditingController passwordController;
   final bool isLoading;
@@ -123,7 +113,6 @@ class _FormSection extends StatefulWidget {
   final String errorMessage;
 
   const _FormSection({
-    required this.formKey,
     required this.emailController,
     required this.passwordController,
     required this.isLoading,
@@ -141,17 +130,17 @@ class _FormSectionState extends State<_FormSection> {
   @override
   Widget build(BuildContext context) {
     final AppLocalizations l10n = AppLocalizations.of(context)!;
-    final Validator validator = context.read<Validator>();
 
     return Form(
-      key: widget.formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (widget.isError)
-            ErrorBanner(message: widget.errorMessage)
-          else
-            const SizedBox(height: 20),
+        children: <Widget>[
+          SizedBox(
+            height: 91,
+            child: widget.isError
+                ? ErrorBanner(message: widget.errorMessage)
+                : const SizedBox.shrink(),
+          ),
           const SizedBox(height: 24),
           Text(
             l10n.textSignInTitle,
@@ -172,7 +161,7 @@ class _FormSectionState extends State<_FormSection> {
             hintText: l10n.hintEmail,
             enabled: !widget.isLoading,
             isError: widget.isError,
-            validator: (String? value) => validator.email(value, l10n),
+            validator: (String? value) => value.toEmailError(context),
           ),
           const SizedBox(height: 20),
           Text(
@@ -186,7 +175,7 @@ class _FormSectionState extends State<_FormSection> {
             enabled: !widget.isLoading,
             obscureText: !_showPassword,
             isError: widget.isError,
-            validator: (String? value) => validator.password(value, l10n),
+            validator: (String? value) => value.toPasswordError(context),
             icon: IconButton(
               onPressed: widget.isLoading
                   ? null
@@ -237,7 +226,7 @@ class _FooterSection extends StatelessWidget {
 
     return Column(
       mainAxisSize: MainAxisSize.min,
-      children: [
+      children: <Widget>[
         AuthButton(
           text: l10n.buttonSignIn,
           isLoading: isLoading,

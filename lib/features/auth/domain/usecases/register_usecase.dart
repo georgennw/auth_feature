@@ -1,7 +1,7 @@
 import 'package:auth/core/utils/result.dart';
 import 'package:auth/features/auth/domain/entities/user.dart';
 import 'package:auth/features/auth/domain/failure/auth_failure.dart';
-import 'package:auth/features/auth/domain/repo/auth_repo.dart';
+import 'package:auth/features/auth/domain/repo/auth_repository.dart';
 
 class RegisterUseCase {
   final AuthRepository _authRepository;

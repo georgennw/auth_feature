@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:auth/core/theme/app_colors.dart';
+import 'package:flutter/material.dart';
 
 class ErrorBanner extends StatelessWidget {
   final String message;
@@ -17,7 +17,7 @@ class ErrorBanner extends StatelessWidget {
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: <Widget>[
           const Icon(Icons.error_outline, color: AppColors.errorText, size: 22),
           const SizedBox(width: 12),
           Expanded(

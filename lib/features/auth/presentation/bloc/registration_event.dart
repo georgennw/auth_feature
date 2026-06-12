@@ -20,7 +20,7 @@ class RegistrationSubmitted extends RegistrationEvent {
   });
 
   @override
-  List<Object?> get props => [username, email, password, gender, age];
+  List<Object?> get props => <Object?>[username, email, password, gender, age];
 }
 
 class RegistrationFieldsChanged extends RegistrationEvent {
@@ -39,5 +39,5 @@ class RegistrationFieldsChanged extends RegistrationEvent {
   });
 
   @override
-  List<Object?> get props => [username, email, password, gender, age];
+  List<Object?> get props => <Object?>[username, email, password, gender, age];
 }

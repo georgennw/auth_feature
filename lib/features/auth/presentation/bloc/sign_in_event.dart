@@ -11,7 +11,7 @@ class SignInSubmitted extends SignInEvent {
   const SignInSubmitted({required this.email, required this.password});
 
   @override
-  List<Object?> get props => [email, password];
+  List<Object?> get props => <Object?>[email, password];
 }
 
 class SignInFieldsChanged extends SignInEvent {
@@ -21,5 +21,5 @@ class SignInFieldsChanged extends SignInEvent {
   const SignInFieldsChanged({required this.email, required this.password});
 
   @override
-  List<Object?> get props => [email, password];
+  List<Object?> get props => <Object?>[email, password];
 }

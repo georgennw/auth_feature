@@ -11,7 +11,6 @@ class AuthTextField extends StatelessWidget {
   final String? Function(String?)? validator;
 
   const AuthTextField({
-    super.key,
     required this.controller,
     required this.hintText,
     this.enabled = true,
@@ -19,6 +18,7 @@ class AuthTextField extends StatelessWidget {
     this.isError = false,
     this.icon,
     this.validator,
+    super.key,
   });
 
   @override
@@ -48,7 +48,7 @@ class AuthTextField extends StatelessWidget {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.borderError, width: 1.0),
+          borderSide: BorderSide(color: AppColors.borderError),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),

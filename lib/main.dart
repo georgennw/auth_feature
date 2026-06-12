@@ -1,9 +1,8 @@
 import 'package:auth/core/l10n/app_localizations.dart';
 import 'package:auth/core/utils/result.dart';
-import 'package:auth/core/validator/validator.dart';
 import 'package:auth/features/auth/domain/entities/user.dart';
 import 'package:auth/features/auth/domain/failure/auth_failure.dart';
-import 'package:auth/features/auth/domain/repo/auth_repo.dart';
+import 'package:auth/features/auth/domain/repo/auth_repository.dart';
 import 'package:auth/features/auth/domain/usecases/register_usecase.dart';
 import 'package:auth/features/auth/domain/usecases/sign_in_usecases.dart';
 import 'package:auth/features/auth/presentation/bloc/registration_bloc.dart';
@@ -12,45 +11,43 @@ import 'package:auth/features/auth/presentation/pages/sign_in_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:nested/nested.dart';
 
 void main() {
-  final authRepository = MockAuthRepository();
-  final signInUseCase = SignInUseCase(authRepository);
-  final registerUseCase = RegisterUseCase(authRepository);
+  final MockAuthRepository authRepository = MockAuthRepository();
+  final SignInUseCase signInUseCase = SignInUseCase(authRepository);
+  final RegisterUseCase registerUseCase = RegisterUseCase(authRepository);
 
   runApp(
     MultiRepositoryProvider(
-      providers: [
-        RepositoryProvider<Validator>.value(value: const Validator()),
+      providers: <SingleChildWidget>[
         RepositoryProvider<AuthRepository>.value(value: authRepository),
         RepositoryProvider<SignInUseCase>.value(value: signInUseCase),
         RepositoryProvider<RegisterUseCase>.value(value: registerUseCase),
       ],
       child: MultiBlocProvider(
-        providers: [
+        providers: <SingleChildWidget>[
           BlocProvider(
-            create: (context) => SignInBloc(
+            create: (BuildContext context) => SignInBloc(
               context.read<SignInUseCase>(),
-              context.read<Validator>(),
             ),
           ),
           BlocProvider(
-            create: (context) => RegistrationBloc(
+            create: (BuildContext context) => RegistrationBloc(
               context.read<RegisterUseCase>(),
-              context.read<Validator>(),
             ),
           ),
         ],
-        child: MaterialApp(
+        child: const MaterialApp(
           debugShowCheckedModeBanner: false,
-          localizationsDelegates: const [
+          localizationsDelegates: <LocalizationsDelegate<dynamic>>[
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: const [Locale('en', ''), Locale('ru', '')],
-          home: const SignInPage(),
+          supportedLocales: <Locale>[Locale('en', ''), Locale('ru', '')],
+          home: SignInPage(),
         ),
       ),
     ),

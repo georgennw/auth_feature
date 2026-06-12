@@ -30,9 +30,9 @@
   "textAlreadyHaveAccount": "Уже есть аккаунт? ",
   "linkSignIn": "Войти",
   
-  "errUsernameRequired": "Имя пользователя обязательно",
-  "errGenderRequired": "Выберите пол",
-  "errAgeRequired": "Укажите возраст",
+  "errorUsernameRequired": "Имя пользователя обязательно",
+  "errorGenderRequired": "Выберите пол",
+  "errorAgeRequired": "Укажите возраст",
 
   "errorEmailRequired": "Email обязателен для заполнения",
   "errorEmailInvalid": "Неверный формат Email",
@@ -42,6 +42,11 @@
   "errorPasswordLowercase": "Пароль должен содержать строчную букву",
   "errorPasswordDigit": "Пароль должен содержать цифру",
   "errorPasswordSpecial": "Пароль должен содержать специальный символ",
+
+  "errorUsernameLength": "Имя пользователя должны быть меньше 14 символов",
+
+  "errorAgeValidation": "Возраст должен быть больше 14",
+
   "errorRepeatPasswordRequired": "Повторите пароль",
   "errorPasswordsDoNotMatch": "Пароли не совпадают",
 

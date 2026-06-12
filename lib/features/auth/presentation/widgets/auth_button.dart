@@ -8,11 +8,11 @@ class AuthButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   const AuthButton({
-    super.key,
     required this.text,
     required this.isLoading,
     required this.isActive,
     required this.onPressed,
+    super.key,
   });
 
   @override

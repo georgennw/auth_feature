@@ -1,6 +1,6 @@
 import 'package:auth/core/l10n/app_localizations.dart';
 import 'package:auth/core/theme/app_colors.dart';
-import 'package:auth/core/validator/validator.dart';
+import 'package:auth/core/validator/validator_ext.dart';
 import 'package:auth/features/auth/presentation/bloc/registration_bloc.dart';
 import 'package:auth/features/auth/presentation/bloc/registration_event.dart';
 import 'package:auth/features/auth/presentation/bloc/registration_state.dart';
@@ -19,20 +19,18 @@ class RegistrationPage extends StatefulWidget {
 }
 
 class _RegistrationPageState extends State<RegistrationPage> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
-  String _selectedGender = '';
 
   @override
   void initState() {
     super.initState();
-    _usernameController.addListener(_onFieldsChanged);
-    _emailController.addListener(_onFieldsChanged);
-    _passwordController.addListener(_onFieldsChanged);
-    _ageController.addListener(_onFieldsChanged);
+    _usernameController.addListener(_onRegistrationFieldsChanged);
+    _emailController.addListener(_onRegistrationFieldsChanged);
+    _passwordController.addListener(_onRegistrationFieldsChanged);
+    _ageController.addListener(_onRegistrationFieldsChanged);
   }
 
   @override
@@ -44,13 +42,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
     super.dispose();
   }
 
-  void _onFieldsChanged() {
+  void _onRegistrationFieldsChanged() {
     context.read<RegistrationBloc>().add(
       RegistrationFieldsChanged(
         username: _usernameController.text,
         email: _emailController.text,
         password: _passwordController.text,
-        gender: _selectedGender,
+        gender: context.read<RegistrationBloc>().state.selectedGender,
         age: _ageController.text,
       ),
     );
@@ -75,7 +73,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 : '';
 
             return Column(
-              children: [
+              children: <Widget>[
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(
@@ -83,18 +81,24 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       vertical: 16.0,
                     ),
                     child: _FormSection(
-                      formKey: _formKey,
                       usernameController: _usernameController,
                       emailController: _emailController,
                       passwordController: _passwordController,
                       ageController: _ageController,
-                      selectedGender: _selectedGender,
+                      selectedGender: state.selectedGender,
                       isLoading: isLoading,
                       isError: isError,
                       errorMessage: errorMessage,
                       onGenderChanged: (String value) {
-                        _selectedGender = value;
-                        _onFieldsChanged();
+                        context.read<RegistrationBloc>().add(
+                          RegistrationFieldsChanged(
+                            username: _usernameController.text,
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                            gender: value,
+                            age: _ageController.text,
+                          ),
+                        );
                       },
                     ),
                   ),
@@ -110,17 +114,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     isLoading: isLoading,
                     isButtonActive: state.isButtonActive,
                     onSubmit: () {
-                      if (_formKey.currentState?.validate() ?? false) {
-                        context.read<RegistrationBloc>().add(
-                          RegistrationSubmitted(
-                            username: _usernameController.text.trim(),
-                            email: _emailController.text.trim(),
-                            password: _passwordController.text,
-                            gender: _selectedGender,
-                            age: _ageController.text.trim(),
-                          ),
-                        );
-                      }
+                      context.read<RegistrationBloc>().add(
+                        RegistrationSubmitted(
+                          username: _usernameController.text.trim(),
+                          email: _emailController.text.trim(),
+                          password: _passwordController.text,
+                          gender: state.selectedGender,
+                          age: _ageController.text.trim(),
+                        ),
+                      );
                     },
                   ),
                 ),
@@ -134,7 +136,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
 }
 
 class _FormSection extends StatefulWidget {
-  final GlobalKey<FormState> formKey;
   final TextEditingController usernameController;
   final TextEditingController emailController;
   final TextEditingController passwordController;
@@ -146,7 +147,6 @@ class _FormSection extends StatefulWidget {
   final ValueChanged<String> onGenderChanged;
 
   const _FormSection({
-    required this.formKey,
     required this.usernameController,
     required this.emailController,
     required this.passwordController,
@@ -168,17 +168,17 @@ class _FormSectionState extends State<_FormSection> {
   @override
   Widget build(BuildContext context) {
     final AppLocalizations l10n = AppLocalizations.of(context)!;
-    final Validator validator = context.read<Validator>();
 
     return Form(
-      key: widget.formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (widget.isError)
-            ErrorBanner(message: widget.errorMessage)
-          else
-            const SizedBox(height: 10),
+        children: <Widget>[
+          SizedBox(
+            height: 26,
+            child: widget.isError
+                ? ErrorBanner(message: widget.errorMessage)
+                : null,
+          ),
           IconButton(
             onPressed: widget.isLoading
                 ? null
@@ -207,9 +207,7 @@ class _FormSectionState extends State<_FormSection> {
             hintText: l10n.hintUsername,
             enabled: !widget.isLoading,
             isError: widget.isError,
-            validator: (String? v) => (v == null || v.trim().isEmpty)
-                ? l10n.errUsernameRequired
-                : null,
+            validator: (String? value) => value.toUsernameError(context),
           ),
           const SizedBox(height: 20),
           Text(
@@ -222,11 +220,11 @@ class _FormSectionState extends State<_FormSection> {
             hintText: l10n.hintEmail,
             enabled: !widget.isLoading,
             isError: widget.isError,
-            validator: (String? v) => validator.email(v, l10n),
+            validator: (String? value) => value.toEmailError(context),
           ),
           const SizedBox(height: 20),
           Row(
-            children: [
+            children: <Widget>[
               Text(
                 l10n.password,
                 style: const TextStyle(
@@ -265,7 +263,7 @@ class _FormSectionState extends State<_FormSection> {
             enabled: !widget.isLoading,
             obscureText: !_showPassword,
             isError: widget.isError,
-            validator: (String? v) => validator.password(v, l10n),
+            validator: (String? value) => value.toPasswordError(context),
             icon: IconButton(
               onPressed: widget.isLoading
                   ? null
@@ -304,8 +302,7 @@ class _FormSectionState extends State<_FormSection> {
                 ? null
                 : (String? v) => widget.onGenderChanged(v ?? ''),
             autovalidateMode: AutovalidateMode.onUserInteraction,
-            validator: (String? v) =>
-                (v == null || v.isEmpty) ? l10n.errGenderRequired : null,
+            validator: (String? value) => value.toGenderError(context),
             decoration: InputDecoration(
               hintText: l10n.hintGender,
               contentPadding: const EdgeInsets.symmetric(
@@ -326,10 +323,7 @@ class _FormSectionState extends State<_FormSection> {
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(
-                  color: AppColors.borderError,
-                  width: 1.0,
-                ),
+                borderSide: BorderSide(color: AppColors.borderError),
               ),
               focusedErrorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -351,8 +345,7 @@ class _FormSectionState extends State<_FormSection> {
             hintText: l10n.hintAge,
             enabled: !widget.isLoading,
             isError: widget.isError,
-            validator: (String? v) =>
-                (v == null || v.trim().isEmpty) ? l10n.errAgeRequired : null,
+            validator: (String? value) => value.toAgeError(context),
           ),
         ],
       ),
@@ -377,7 +370,7 @@ class _FooterSection extends StatelessWidget {
 
     return Column(
       mainAxisSize: MainAxisSize.min,
-      children: [
+      children: <Widget>[
         AuthButton(
           text: l10n.register,
           isLoading: isLoading,
@@ -387,7 +380,7 @@ class _FooterSection extends StatelessWidget {
         const SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
             Text(
               l10n.textAlreadyHaveAccount,
               style: const TextStyle(fontSize: 15),

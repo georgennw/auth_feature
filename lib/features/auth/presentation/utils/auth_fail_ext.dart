@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 extension AuthFailureL10n on AuthFailure {
   String toLocalizeString(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final AppLocalizations l10n = AppLocalizations.of(context)!;
 
     return switch (this) {
       InvalidCredentialsFailure() => l10n.serverErrorInvalidCredentials,

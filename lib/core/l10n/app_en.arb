@@ -29,9 +29,10 @@
   "register": "Register",
   "textAlreadyHaveAccount": "Already have an account? ",
   "linkSignIn": "Sign In",
-  "errUsernameRequired": "Username is required",
-  "errGenderRequired": "Gender is required",
-  "errAgeRequired": "Age is required",
+
+  "errorUsernameRequired": "Username is required",
+  "errorGenderRequired": "Gender is required",
+  "errorAgeRequired": "Age is required",
 
   "errorEmailRequired": "Email is required",
   "errorEmailInvalid": "Invalid email format",
@@ -41,6 +42,11 @@
   "errorPasswordLowercase": "Password needs a lowercase letter",
   "errorPasswordDigit": "Password needs a digit",
   "errorPasswordSpecial": "Password needs a special character",
+
+  "errorUsernameLength": "Username must be lower than 14 symbols",
+
+  "errorAgeValidation": "Age must be more than 14",
+
   "errorRepeatPasswordRequired": "Repeat password is required",
   "errorPasswordsDoNotMatch": "Passwords do not match",
 

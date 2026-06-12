@@ -10,7 +10,7 @@ sealed class SignInState extends Equatable {
   SignInState copyWith({bool? isButtonActive});
 
   @override
-  List<Object?> get props => [isButtonActive];
+  List<Object?> get props => <Object?>[isButtonActive];
 }
 
 class SignInInitial extends SignInState {
@@ -45,7 +45,7 @@ class SignInSuccess extends SignInState {
   }
 
   @override
-  List<Object?> get props => [user, isButtonActive];
+  List<Object?> get props => <Object?>[user, isButtonActive];
 }
 
 class SignInError extends SignInState {
@@ -62,5 +62,5 @@ class SignInError extends SignInState {
   }
 
   @override
-  List<Object?> get props => [failure, isButtonActive];
+  List<Object?> get props => <Object?>[failure, isButtonActive];
 }
