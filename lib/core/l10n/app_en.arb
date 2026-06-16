@@ -1,0 +1,58 @@
+{
+  "@@locale": "en",
+
+  "textSignInTitle": "It’s great to see you\ntoday!",
+  "labelEmail": "Email",
+  "hintEmail": "Enter your email",
+  "labelPassword": "Password",
+  "hintPassword": "Enter your password",
+  "linkForgotPassword": "Forgot password?",
+  "buttonSignIn": "Sign in",
+  "textDontHaveAccount": "Don’t have an account? ",
+  "linkRegister": "Register",
+
+  "providePersonalInfo": "Provide your personal info",
+  "username": "Username",
+  "hintUsername": "Enter your username",
+  "email": "Email",
+  "hintEmail": "Enter your email",
+  "password": "Password",
+  "hintPassword": "Enter your password",
+  "passwordTooltip": "Password should contain a minimum of 8 and a maximum of 64 characters, including 1 uppercase Latin letter, 1 lowercase Latin letter, and 1 number",
+  "gender": "Gender",
+  "hintGender": "Choose your gender",
+  "genderMale": "Male",
+  "genderFemale": "Female",
+  "genderOther": "Other",
+  "age": "Age",
+  "hintAge": "Enter your age",
+  "register": "Register",
+  "textAlreadyHaveAccount": "Already have an account? ",
+  "linkSignIn": "Sign In",
+
+  "errorUsernameRequired": "Username is required",
+  "errorGenderRequired": "Gender is required",
+  "errorAgeRequired": "Age is required",
+
+  "errorEmailRequired": "Email is required",
+  "errorEmailInvalid": "Invalid email format",
+  "errorPasswordRequired": "Password is required",
+  "errorPasswordLength": "Password must be 8-24 characters",
+  "errorPasswordUppercase": "Password needs an uppercase letter",
+  "errorPasswordLowercase": "Password needs a lowercase letter",
+  "errorPasswordDigit": "Password needs a digit",
+  "errorPasswordSpecial": "Password needs a special character",
+
+  "errorUsernameLength": "Username must be lower than 14 symbols",
+
+  "errorAgeValidation": "Age must be more than 14",
+
+  "errorRepeatPasswordRequired": "Repeat password is required",
+  "errorPasswordsDoNotMatch": "Passwords do not match",
+
+  "serverErrorInvalidCredentials": "Invalid email or password. Please try again",
+  "serverErrorEmailAlreadyInUse": "This email is already registered",
+  "serverErrorUserNotFound": "User with this email was not found",
+  "serverErrorNetwork": "Network error. Please check your internet connection",
+  "serverErrorUnknown": "Something went wrong. Please try again later"
+}
