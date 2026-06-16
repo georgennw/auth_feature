@@ -9,6 +9,7 @@ import 'package:auth/features/auth/presentation/utils/auth_fail_ext.dart';
 import 'package:auth/features/auth/presentation/widgets/auth_button.dart';
 import 'package:auth/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:auth/features/auth/presentation/widgets/error_banner.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -161,6 +162,7 @@ class _FormSectionState extends State<_FormSection> {
             hintText: l10n.hintEmail,
             enabled: !widget.isLoading,
             isError: widget.isError,
+            textInputAction: TextInputAction.next,
             validator: (String? value) => value.toEmailError(context),
           ),
           const SizedBox(height: 20),
@@ -175,6 +177,7 @@ class _FormSectionState extends State<_FormSection> {
             enabled: !widget.isLoading,
             obscureText: !_showPassword,
             isError: widget.isError,
+            textInputAction: TextInputAction.done,
             validator: (String? value) => value.toPasswordError(context),
             icon: IconButton(
               onPressed: widget.isLoading
@@ -192,11 +195,16 @@ class _FormSectionState extends State<_FormSection> {
             child: TextButton(
               onPressed: widget.isLoading
                   ? null
-                  : () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => const RegistrationPage(),
-                      ),
-                    ),
+                  : () {
+                      context.read<SignInBloc>().add(
+                        const SignInFieldsChanged(email: '', password: ''),
+                      );
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const RegistrationPage(),
+                        ),
+                      );
+                    },
               child: Text(
                 l10n.linkForgotPassword,
                 style: const TextStyle(color: AppColors.blue, fontSize: 15),
@@ -234,6 +242,15 @@ class _FooterSection extends StatelessWidget {
           onPressed: onSubmit,
         ),
         const SizedBox(height: 20),
+        AuthButton(
+          text: 'Тест Крашлитики',
+          isLoading: false,
+          isActive: true,
+          onPressed: () {
+            FirebaseCrashlytics.instance.crash();
+          },
+        ),
+        const SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -244,11 +261,16 @@ class _FooterSection extends StatelessWidget {
             GestureDetector(
               onTap: isLoading
                   ? null
-                  : () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => const RegistrationPage(),
-                      ),
-                    ),
+                  : () {
+                      context.read<SignInBloc>().add(
+                        const SignInFieldsChanged(email: '', password: ''),
+                      );
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const RegistrationPage(),
+                        ),
+                      );
+                    },
               child: Text(
                 l10n.linkRegister,
                 style: const TextStyle(

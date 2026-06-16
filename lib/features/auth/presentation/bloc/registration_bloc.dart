@@ -33,7 +33,10 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
         isAgeValid;
 
     emit(
-      state.copyWith(isButtonActive: isActive, selectedGender: event.gender),
+      RegistrationInitial(
+        isButtonActive: isActive,
+        selectedGender: event.gender,
+      ),
     );
   }
 

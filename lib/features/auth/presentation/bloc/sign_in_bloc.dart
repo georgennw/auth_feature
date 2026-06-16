@@ -21,7 +21,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     final bool isPasswordValid = event.password.isValidPassword;
     final bool isActive = isEmailValid && isPasswordValid;
 
-    emit(state.copyWith(isButtonActive: isActive));
+    emit(SignInInitial(isButtonActive: isActive));
   }
 
   Future<void> _onSubmitted(

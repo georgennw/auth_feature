@@ -1,5 +1,6 @@
 import 'package:auth/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AuthTextField extends StatelessWidget {
   final TextEditingController controller;
@@ -8,6 +9,9 @@ class AuthTextField extends StatelessWidget {
   final bool obscureText;
   final bool isError;
   final Widget? icon;
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
+  final TextInputAction? textInputAction;
   final String? Function(String?)? validator;
 
   const AuthTextField({
@@ -18,6 +22,9 @@ class AuthTextField extends StatelessWidget {
     this.isError = false,
     this.icon,
     this.validator,
+    this.keyboardType,
+    this.inputFormatters,
+    this.textInputAction,
     super.key,
   });
 
@@ -28,6 +35,9 @@ class AuthTextField extends StatelessWidget {
       enabled: enabled,
       obscureText: obscureText,
       validator: validator,
+      inputFormatters: inputFormatters,
+      keyboardType: keyboardType,
+      textInputAction: textInputAction,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecoration(
         hintText: hintText,

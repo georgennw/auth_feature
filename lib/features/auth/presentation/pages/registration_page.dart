@@ -9,6 +9,7 @@ import 'package:auth/features/auth/presentation/widgets/auth_button.dart';
 import 'package:auth/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:auth/features/auth/presentation/widgets/error_banner.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RegistrationPage extends StatefulWidget {
@@ -71,9 +72,22 @@ class _RegistrationPageState extends State<RegistrationPage> {
             final String errorMessage = isError
                 ? state.failure.toLocalizeString(context)
                 : '';
-
             return Column(
               children: <Widget>[
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: const EdgeInsetsGeometry.only(left: 24, top: 16),
+                    child: IconButton(
+                      onPressed: state is RegistrationLoading
+                          ? null
+                          : () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.arrow_back_ios, color: Colors.blue),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ),
+                ),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(
@@ -179,14 +193,6 @@ class _FormSectionState extends State<_FormSection> {
                 ? ErrorBanner(message: widget.errorMessage)
                 : null,
           ),
-          IconButton(
-            onPressed: widget.isLoading
-                ? null
-                : () => Navigator.of(context).pop(),
-            icon: const Icon(Icons.arrow_back_ios, color: AppColors.blue),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-          ),
           const SizedBox(height: 24),
           Text(
             l10n.providePersonalInfo,
@@ -207,6 +213,7 @@ class _FormSectionState extends State<_FormSection> {
             hintText: l10n.hintUsername,
             enabled: !widget.isLoading,
             isError: widget.isError,
+            textInputAction: TextInputAction.next,
             validator: (String? value) => value.toUsernameError(context),
           ),
           const SizedBox(height: 20),
@@ -220,6 +227,7 @@ class _FormSectionState extends State<_FormSection> {
             hintText: l10n.hintEmail,
             enabled: !widget.isLoading,
             isError: widget.isError,
+            textInputAction: TextInputAction.next,
             validator: (String? value) => value.toEmailError(context),
           ),
           const SizedBox(height: 20),
@@ -263,6 +271,7 @@ class _FormSectionState extends State<_FormSection> {
             enabled: !widget.isLoading,
             obscureText: !_showPassword,
             isError: widget.isError,
+            textInputAction: TextInputAction.next,
             validator: (String? value) => value.toPasswordError(context),
             icon: IconButton(
               onPressed: widget.isLoading
@@ -281,6 +290,8 @@ class _FormSectionState extends State<_FormSection> {
           ),
           const SizedBox(height: 8),
           DropdownButtonFormField<String>(
+            dropdownColor: AppColors.white,
+            borderRadius: BorderRadius.circular(12),
             initialValue: widget.selectedGender.isEmpty
                 ? null
                 : widget.selectedGender,
@@ -345,6 +356,11 @@ class _FormSectionState extends State<_FormSection> {
             hintText: l10n.hintAge,
             enabled: !widget.isLoading,
             isError: widget.isError,
+            textInputAction: TextInputAction.done,
+            keyboardType: TextInputType.number,
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.digitsOnly,
+            ],
             validator: (String? value) => value.toAgeError(context),
           ),
         ],
