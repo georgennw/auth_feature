@@ -1,9 +1,12 @@
 import 'package:auth/core/l10n/app_localizations.dart';
 import 'package:auth/core/theme/app_colors.dart';
 import 'package:auth/core/validator/validator_ext.dart';
+import 'package:auth/features/auth/presentation/bloc/forgot_bloc.dart';
+import 'package:auth/features/auth/presentation/bloc/forgot_event.dart';
 import 'package:auth/features/auth/presentation/bloc/sign_in_bloc.dart';
 import 'package:auth/features/auth/presentation/bloc/sign_in_event.dart';
 import 'package:auth/features/auth/presentation/bloc/sign_in_state.dart';
+import 'package:auth/features/auth/presentation/pages/forgot_page.dart';
 import 'package:auth/features/auth/presentation/pages/registration_page.dart';
 import 'package:auth/features/auth/presentation/utils/auth_fail_ext.dart';
 import 'package:auth/features/auth/presentation/widgets/auth_button.dart';
@@ -196,12 +199,15 @@ class _FormSectionState extends State<_FormSection> {
               onPressed: widget.isLoading
                   ? null
                   : () {
+                      context.read<ForgotPasswordBloc>().add(
+                        const ForgotPasswordReset(),
+                      );
                       context.read<SignInBloc>().add(
                         const SignInFieldsChanged(email: '', password: ''),
                       );
                       Navigator.of(context).push(
                         MaterialPageRoute<void>(
-                          builder: (_) => const RegistrationPage(),
+                          builder: (_) => const ForgotPasswordPage(),
                         ),
                       );
                     },

@@ -123,6 +123,30 @@ enum GenderRule {
   }
 }
 
+enum OtpRule {
+  required,
+  length;
+
+  bool check(String? value) {
+    if (this == OtpRule.required) {
+      return value != null && value.trim().isNotEmpty;
+    }
+    if (value == null || value.trim().isEmpty) return false;
+
+    return switch (this) {
+      OtpRule.required => true,
+      OtpRule.length => value.trim().length == 4,
+    };
+  }
+
+  String getErrorMessage(AppLocalizations l10n) {
+    return switch (this) {
+      OtpRule.required => l10n.errorOtpRequired,
+      OtpRule.length => l10n.errorOtpLength,
+    };
+  }
+}
+
 extension BlocValidationExt on String? {
   bool get isValidEmail =>
       EmailRule.values.every((EmailRule rule) => rule.check(this));
@@ -134,4 +158,6 @@ extension BlocValidationExt on String? {
       GenderRule.values.every((GenderRule rule) => rule.check(this));
   bool get isValidAge =>
       AgeRule.values.every((AgeRule rule) => rule.check(this));
+  bool get isValidOtp =>
+      OtpRule.values.every((OtpRule rule) => rule.check(this));
 }

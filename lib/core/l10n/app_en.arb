@@ -54,5 +54,29 @@
   "serverErrorEmailAlreadyInUse": "This email is already registered",
   "serverErrorUserNotFound": "User with this email was not found",
   "serverErrorNetwork": "Network error. Please check your internet connection",
-  "serverErrorUnknown": "Something went wrong. Please try again later"
+  "serverErrorUnknown": "Something went wrong. Please try again later",
+
+  "forgotPasswordTitle": "Forgot password?",
+  "forgotPasswordSubtitle": "Enter your email address, we will send you a code to recover your password.",
+  "enterCodeTitle": "Enter the code",
+  "enterCodeSubtitle": "A verification code has been sent to your email address. Please provide it below.",
+  "setNewPasswordTitle": "Set new password",
+  "setNewPasswordSubtitle": "Create a new password that is different from previous ones.",
+  
+  "labelEmail": "Email",
+  "hintEmail": "example@mail.com",
+  "labelNewPassword": "New password",
+  "labelRepeatPassword": "Repeat password",
+  "hintPassword": "••••••••",
+  
+  "errorOtpRequired": "Code is required",
+  "errorOtpLength": "Code must be 4 digits",
+  "errorPasswordsDoNotMatch": "Passwords do not match",
+  "passwordResetSuccess": "Password has been updated successfully!",
+  
+  "buttonContinue": "Continue",
+  "buttonVerify": "Verify",
+  "buttonSavePassword": "Save password",
+  "linkResendCode": "Resend code",
+  "resendCodeText": "Resend code in"
 }

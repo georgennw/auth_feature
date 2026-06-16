@@ -49,4 +49,11 @@ extension UIValidationExt on String? {
     }
     return null;
   }
+
+  String? toOtpError(BuildContext context) => _getError<OtpRule>(
+    context,
+    OtpRule.values,
+    (OtpRule rule) => rule.check(this),
+    (OtpRule rule, AppLocalizations l10n) => rule.getErrorMessage(l10n),
+  );
 }
