@@ -8,6 +8,7 @@ import 'package:auth/features/auth/presentation/utils/auth_fail_ext.dart';
 import 'package:auth/features/auth/presentation/widgets/auth_button.dart';
 import 'package:auth/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:auth/features/auth/presentation/widgets/error_banner.dart';
+import 'package:auth/features/auth/presentation/widgets/otp_cell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -74,7 +75,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           listener: (BuildContext context, ForgotPasswordState state) {
             if (state.step == ForgotPasswordStep.success) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10n.passwordResetSuccess)),
+                SnackBar(content: Text(l10n.passwordResetSuccess), backgroundColor: const Color.fromARGB(255, 136, 132, 255),),
               );
               Navigator.of(context).pop();
             }
@@ -115,12 +116,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          SizedBox(
-                            height: 92,
-                            child: isError
-                                ? ErrorBanner(message: errorMessage)
-                                : const SizedBox.shrink(),
-                          ),
+                          // SizedBox(
+                          //   height: 92,
+                          //   child: isError
+                          //       ? ErrorBanner(message: errorMessage)
+                          //       : const SizedBox.shrink(),
+                          // ),
                           const SizedBox(height: 12),
                           if (state.step == ForgotPasswordStep.emailForm)
                             _EmailStepView(emailController: _emailController)
@@ -232,87 +233,78 @@ class _OtpStepView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppLocalizations l10n = AppLocalizations.of(context)!;
-    final String currentOtp = otpController.text;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
           l10n.enterCodeTitle,
-          style: const TextStyle(fontSize: 34, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         Text(
           l10n.enterCodeSubtitle,
-          style: const TextStyle(fontSize: 15, color: AppColors.grey),
+          style: const TextStyle(fontSize: 15, color: Color(0xFF949494)),
         ),
         const SizedBox(height: 40),
-        Stack(
-          children: <Widget>[
-            Opacity(
-              opacity: 0.0,
-              child: TextFormField(
-                controller: otpController,
-                keyboardType: TextInputType.number,
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(4),
-                ],
-                autofocus: true,
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(4, (int index) {
-                final bool isFocused = currentOtp.length == index;
-                final bool hasValue = currentOtp.length > index;
-                final String char = hasValue ? currentOtp[index] : '';
-                return Container(
-                  width: 56,
-                  height: 56,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade50,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: state.failure != null
-                          ? AppColors.borderError
-                          : isFocused
-                          ? AppColors.blue
-                          : AppColors.grey400,
-                      width: isFocused ? 2 : 1,
-                    ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Stack(
+              children: <Widget>[
+                Opacity(
+                  opacity: 0.0,
+                  child: AuthTextField(
+                    controller: otpController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(4),
+                    ],
+                    autofocus: true,
                   ),
-                  child: Text(
-                    char,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                );
-              }),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: List.generate(4, (int i) {
+                    final bool isFocused = state.otp.length == i;
+                    return OtpCell(
+                      char: state.otp.length > i ? state.otp[i] : '',
+                      isFocused: isFocused,
+                      hasError: state.failure != null,
+                    );
+                  }),
+                ),
+              ],
             ),
           ],
         ),
+        if (state.failure != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Text(
+              state.failure!.toLocalizeString(context),
+              style: const TextStyle(color: AppColors.error, fontSize: 13),
+            ),
+          ),
         const SizedBox(height: 24),
         Center(
-          child: state.timerSeconds > 0
+          child: state.isTimerRunning
               ? Text(
                   "${l10n.resendCodeText} 00:${state.timerSeconds.toString().padLeft(2, '0')}",
-                  style: const TextStyle(color: AppColors.grey, fontSize: 15),
+                  style: const TextStyle(
+                    color: Color(0xFF949494),
+                    fontSize: 15,
+                  ),
                 )
               : TextButton(
-                  onPressed: () {
-                    otpController.clear();
-                    context.read<ForgotPasswordBloc>().add(
-                      ForgotPasswordResendOtpRequested(),
-                    );
-                  },
+                  onPressed: () => context.read<ForgotPasswordBloc>().add(
+                    ForgotPasswordResendOtpRequested(),
+                  ),
                   child: Text(
                     l10n.linkResendCode,
                     style: const TextStyle(
-                      color: AppColors.blue,
+                      color: Color(0xFF007FFF),
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
                     ),
@@ -324,7 +316,7 @@ class _OtpStepView extends StatelessWidget {
   }
 }
 
-class _ResetPasswordStepView extends StatelessWidget {
+class _ResetPasswordStepView extends StatefulWidget {
   final TextEditingController passwordController;
   final TextEditingController confirmPasswordController;
   final bool isLoading;
@@ -338,8 +330,17 @@ class _ResetPasswordStepView extends StatelessWidget {
   });
 
   @override
+  State<_ResetPasswordStepView> createState() => _ResetPasswordStepViewState();
+}
+
+class _ResetPasswordStepViewState extends State<_ResetPasswordStepView> {
+  bool _obscurePassword = true;
+  bool _obscureConfirm = true;
+
+  @override
   Widget build(BuildContext context) {
     final AppLocalizations l10n = AppLocalizations.of(context)!;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -360,34 +361,55 @@ class _ResetPasswordStepView extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         AuthTextField(
-          controller: passwordController,
+          controller: widget.passwordController,
           hintText: l10n.hintPassword,
-          enabled: !isLoading,
-          isError: isError,
-          obscureText: true,
+          enabled: !widget.isLoading,
+          isError: widget.isError,
+          obscureText: _obscurePassword,
           textInputAction: TextInputAction.next,
           validator: (String? v) => v.toPasswordError(context),
+          onChanged: (v) => context.read<ForgotPasswordBloc>().add(
+            ForgotPasswordResetFieldsChanged(
+              v,
+              widget.confirmPasswordController.text,
+            ),
+          ),
+          icon: IconButton(
+            icon: Icon(
+              _obscurePassword ? Icons.visibility_off : Icons.visibility,
+            ),
+            onPressed: () =>
+                setState(() => _obscurePassword = !_obscurePassword),
+          ),
         ),
         const SizedBox(height: 20),
-
         Text(
           l10n.labelRepeatPassword,
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         AuthTextField(
-          controller: confirmPasswordController,
+          controller: widget.confirmPasswordController,
           hintText: l10n.hintPassword,
-          enabled: !isLoading,
-          isError: isError,
-          obscureText: true,
+          enabled: !widget.isLoading,
+          isError: widget.isError,
+          obscureText: _obscureConfirm,
           textInputAction: TextInputAction.done,
           validator: (String? v) {
-            if (v != passwordController.text) {
+            if (v != widget.passwordController.text) {
               return l10n.errorPasswordsDoNotMatch;
             }
             return null;
           },
+          onChanged: (v) => context.read<ForgotPasswordBloc>().add(
+            ForgotPasswordResetFieldsChanged(widget.passwordController.text, v),
+          ),
+          icon: IconButton(
+            icon: Icon(
+              _obscureConfirm ? Icons.visibility_off : Icons.visibility,
+            ),
+            onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
+          ),
         ),
       ],
     );

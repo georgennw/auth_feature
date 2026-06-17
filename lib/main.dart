@@ -126,7 +126,7 @@ class MockAuthRepository implements AuthRepository {
       return FailureResult(const NetworkFailure());
     }
     if (code == '0000') {
-      return FailureResult(const InvalidCredentialsFailure());
+      return FailureResult(const InvalidOtpFailure());
     }
     return Success(null);
   }

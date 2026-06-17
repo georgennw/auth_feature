@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 
 class AuthTextField extends StatelessWidget {
   final TextEditingController controller;
-  final String hintText;
+  final String? hintText;
   final bool enabled;
   final bool obscureText;
   final bool isError;
@@ -13,10 +13,12 @@ class AuthTextField extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final TextInputAction? textInputAction;
   final String? Function(String?)? validator;
+  final ValueChanged<String>? onChanged;
+  final bool autofocus;
 
   const AuthTextField({
     required this.controller,
-    required this.hintText,
+    this.hintText,
     this.enabled = true,
     this.obscureText = false,
     this.isError = false,
@@ -25,6 +27,8 @@ class AuthTextField extends StatelessWidget {
     this.keyboardType,
     this.inputFormatters,
     this.textInputAction,
+    this.onChanged,
+    this.autofocus = false,
     super.key,
   });
 
@@ -37,7 +41,9 @@ class AuthTextField extends StatelessWidget {
       validator: validator,
       inputFormatters: inputFormatters,
       keyboardType: keyboardType,
+      onChanged: onChanged,
       textInputAction: textInputAction,
+      autofocus: autofocus,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecoration(
         hintText: hintText,

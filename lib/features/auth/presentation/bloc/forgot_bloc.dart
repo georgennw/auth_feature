@@ -43,7 +43,9 @@ class ForgotPasswordBloc
     Emitter<ForgotPasswordState> emit,
   ) async {
     emit(state.copyWith(isLoading: true));
-    final Result<void, AuthFailure> result = await _useCase.sendOtp(state.email);
+    final Result<void, AuthFailure> result = await _useCase.sendOtp(
+      state.email,
+    );
 
     switch (result) {
       case Success():
@@ -54,7 +56,7 @@ class ForgotPasswordBloc
             isButtonActive: false,
           ),
         );
-        _startTimer();
+        _startTimer(emit);
       case FailureResult(failure: final AuthFailure failure):
         emit(state.copyWith(isLoading: false, failure: failure));
     }
@@ -78,7 +80,10 @@ class ForgotPasswordBloc
     Emitter<ForgotPasswordState> emit,
   ) async {
     emit(state.copyWith(isLoading: true));
-    final Result<void, AuthFailure> result = await _useCase.verifyOtp(state.email, state.otp);
+    final Result<void, AuthFailure> result = await _useCase.verifyOtp(
+      state.email,
+      state.otp,
+    );
 
     switch (result) {
       case Success():
@@ -99,9 +104,14 @@ class ForgotPasswordBloc
     ForgotPasswordResendOtpRequested event,
     Emitter<ForgotPasswordState> emit,
   ) {
-    if (state.timerSeconds > 0) return;
+    if (state.isTimerRunning) return;
+
+    emit(state.copyWith(isLoading: true));
+
     _useCase.sendOtp(state.email);
-    _startTimer();
+    _startTimer(emit);
+
+    emit(state.copyWith(isLoading: false));
   }
 
   void _onResetFieldsChanged(
@@ -150,12 +160,30 @@ class ForgotPasswordBloc
     emit(state.copyWith(timerSeconds: event.seconds));
   }
 
-  void _startTimer() {
+  void _startTimer(Emitter<ForgotPasswordState> emit) {
     _timerSubscription?.cancel();
-    _timerSubscription = Stream<int>.periodic(
-      const Duration(seconds: 1),
-      (int x) => 59 - x,
-    ).take(60).listen((int seconds) => add(ForgotPasswordTimerTicked(seconds)));
+    final endTime = DateTime.now().add(const Duration(seconds: 60));
+
+    emit(
+      state.copyWith(
+        isTimerRunning: true,
+        timerSeconds: 60,
+        timerEndTime: endTime,
+      ),
+    );
+
+    _timerSubscription =
+        Stream<int>.periodic(
+          const Duration(seconds: 1),
+          (i) => i,
+        ).take(60).listen((_) {
+          final remaining = endTime.difference(DateTime.now()).inSeconds;
+          add(
+            remaining > 0
+                ? ForgotPasswordTimerTicked(remaining)
+                : const ForgotPasswordTimerFinished(),
+          );
+        });
   }
 
   @override

@@ -67,12 +67,13 @@
   "hintEmail": "example@mail.com",
   "labelNewPassword": "New password",
   "labelRepeatPassword": "Repeat password",
-  "hintPassword": "••••••••",
+  "hintPassword": "********",
   
   "errorOtpRequired": "Code is required",
   "errorOtpLength": "Code must be 4 digits",
   "errorPasswordsDoNotMatch": "Passwords do not match",
   "passwordResetSuccess": "Password has been updated successfully!",
+  "invalidOtp": "Invalid code",
   
   "buttonContinue": "Continue",
   "buttonVerify": "Verify",

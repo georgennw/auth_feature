@@ -67,10 +67,11 @@
   "hintEmail": "example@mail.com",
   "labelNewPassword": "Новый пароль",
   "labelRepeatPassword": "Повторите пароль",
-  "hintPassword": "••••••••",
+  "hintPassword": "********",
   
   "errorOtpRequired": "Код обязателен",
   "errorOtpLength": "Код должен состоять из 4 цифр",
+  "invalidOtp": "Неверный код",
   "errorPasswordsDoNotMatch": "Пароли не совпадают",
   "passwordResetSuccess": "Пароль успешно обновлен!",
   

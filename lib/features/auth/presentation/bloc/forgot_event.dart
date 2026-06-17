@@ -49,3 +49,7 @@ class ForgotPasswordTimerTicked extends ForgotPasswordEvent {
 class ForgotPasswordReset extends ForgotPasswordEvent {
   const ForgotPasswordReset();
 }
+
+class ForgotPasswordTimerFinished extends ForgotPasswordEvent {
+  const ForgotPasswordTimerFinished();
+}

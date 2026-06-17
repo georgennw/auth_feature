@@ -13,6 +13,8 @@ class ForgotPasswordState extends Equatable {
   final bool isButtonActive;
   final AuthFailure? failure;
   final int timerSeconds;
+  final bool isTimerRunning;
+  final DateTime? timerEndTime;
 
   const ForgotPasswordState({
     this.email = '',
@@ -24,6 +26,8 @@ class ForgotPasswordState extends Equatable {
     this.isButtonActive = false,
     this.failure,
     this.timerSeconds = 0,
+    this.isTimerRunning = false,
+    this.timerEndTime,
   });
 
   ForgotPasswordState copyWith({
@@ -37,6 +41,8 @@ class ForgotPasswordState extends Equatable {
     AuthFailure? failure,
     int? timerSeconds,
     bool clearFailure = false,
+    bool? isTimerRunning,
+    DateTime? timerEndTime,
   }) {
     return ForgotPasswordState(
       email: email ?? this.email,
@@ -48,6 +54,8 @@ class ForgotPasswordState extends Equatable {
       isButtonActive: isButtonActive ?? this.isButtonActive,
       failure: clearFailure ? null : (failure ?? this.failure),
       timerSeconds: timerSeconds ?? this.timerSeconds,
+      isTimerRunning: isTimerRunning ?? this.isTimerRunning,
+      timerEndTime: timerEndTime ?? this.timerEndTime,
     );
   }
 
@@ -62,5 +70,7 @@ class ForgotPasswordState extends Equatable {
     isButtonActive,
     failure,
     timerSeconds,
+    isTimerRunning,
+    timerEndTime,
   ];
 }
