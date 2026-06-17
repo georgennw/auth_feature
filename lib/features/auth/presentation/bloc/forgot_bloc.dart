@@ -82,7 +82,7 @@ class ForgotPasswordBloc
 
     switch (result) {
       case Success():
-        _timerSubscription?.cancel();
+        await _timerSubscription?.cancel();
         emit(
           state.copyWith(
             isLoading: false,
