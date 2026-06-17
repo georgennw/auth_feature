@@ -71,7 +71,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       backgroundColor: AppColors.white,
       body: SafeArea(
         child: BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
-          listener: (context, state) {
+          listener: (BuildContext context, ForgotPasswordState state) {
             if (state.step == ForgotPasswordStep.success) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(l10n.passwordResetSuccess)),
@@ -79,14 +79,14 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               Navigator.of(context).pop();
             }
           },
-          builder: (context, state) {
+          builder: (BuildContext context, ForgotPasswordState state) {
             final bool isError = state.failure != null;
             final String errorMessage = isError
                 ? state.failure!.toLocalizeString(context)
                 : '';
 
             return Column(
-              children: [
+              children: <Widget>[
                 Align(
                   alignment: Alignment.topLeft,
                   child: Padding(
@@ -114,7 +114,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       key: _formKey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                        children: <Widget>[
                           SizedBox(
                             height: 92,
                             child: isError
@@ -193,10 +193,10 @@ class _EmailStepView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final AppLocalizations l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         Text(
           l10n.forgotPasswordTitle,
           style: const TextStyle(fontSize: 34, fontWeight: FontWeight.bold),
@@ -217,7 +217,7 @@ class _EmailStepView extends StatelessWidget {
           hintText: l10n.hintEmail,
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.done,
-          validator: (v) => v.toEmailError(context),
+          validator: (String? v) => v.toEmailError(context),
         ),
       ],
     );
@@ -231,12 +231,12 @@ class _OtpStepView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final AppLocalizations l10n = AppLocalizations.of(context)!;
     final String currentOtp = otpController.text;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         Text(
           l10n.enterCodeTitle,
           style: const TextStyle(fontSize: 34, fontWeight: FontWeight.bold),
@@ -248,13 +248,13 @@ class _OtpStepView extends StatelessWidget {
         ),
         const SizedBox(height: 40),
         Stack(
-          children: [
+          children: <Widget>[
             Opacity(
               opacity: 0.0,
               child: TextFormField(
                 controller: otpController,
                 keyboardType: TextInputType.number,
-                inputFormatters: [
+                inputFormatters: <TextInputFormatter>[
                   FilteringTextInputFormatter.digitsOnly,
                   LengthLimitingTextInputFormatter(4),
                 ],
@@ -263,7 +263,7 @@ class _OtpStepView extends StatelessWidget {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(4, (index) {
+              children: List.generate(4, (int index) {
                 final bool isFocused = currentOtp.length == index;
                 final bool hasValue = currentOtp.length > index;
                 final String char = hasValue ? currentOtp[index] : '';
@@ -339,10 +339,10 @@ class _ResetPasswordStepView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final AppLocalizations l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         Text(
           l10n.setNewPasswordTitle,
           style: const TextStyle(fontSize: 34, fontWeight: FontWeight.bold),
@@ -366,7 +366,7 @@ class _ResetPasswordStepView extends StatelessWidget {
           isError: isError,
           obscureText: true,
           textInputAction: TextInputAction.next,
-          validator: (v) => v.toPasswordError(context),
+          validator: (String? v) => v.toPasswordError(context),
         ),
         const SizedBox(height: 20),
 
@@ -382,7 +382,7 @@ class _ResetPasswordStepView extends StatelessWidget {
           isError: isError,
           obscureText: true,
           textInputAction: TextInputAction.done,
-          validator: (v) {
+          validator: (String? v) {
             if (v != passwordController.text) {
               return l10n.errorPasswordsDoNotMatch;
             }

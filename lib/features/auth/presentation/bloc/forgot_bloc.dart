@@ -43,7 +43,7 @@ class ForgotPasswordBloc
     Emitter<ForgotPasswordState> emit,
   ) async {
     emit(state.copyWith(isLoading: true));
-    final result = await _useCase.sendOtp(state.email);
+    final Result<void, AuthFailure> result = await _useCase.sendOtp(state.email);
 
     switch (result) {
       case Success():
@@ -55,7 +55,7 @@ class ForgotPasswordBloc
           ),
         );
         _startTimer();
-      case FailureResult(failure: final failure):
+      case FailureResult(failure: final AuthFailure failure):
         emit(state.copyWith(isLoading: false, failure: failure));
     }
   }
@@ -78,7 +78,7 @@ class ForgotPasswordBloc
     Emitter<ForgotPasswordState> emit,
   ) async {
     emit(state.copyWith(isLoading: true));
-    final result = await _useCase.verifyOtp(state.email, state.otp);
+    final Result<void, AuthFailure> result = await _useCase.verifyOtp(state.email, state.otp);
 
     switch (result) {
       case Success():
@@ -127,7 +127,7 @@ class ForgotPasswordBloc
   ) async {
     emit(state.copyWith(isLoading: true));
 
-    final result = await _useCase.resetPassword(
+    final Result<void, AuthFailure> result = await _useCase.resetPassword(
       email: state.email,
       code: state.otp,
       newPassword: state.newPassword,
@@ -138,7 +138,7 @@ class ForgotPasswordBloc
         emit(
           state.copyWith(isLoading: false, step: ForgotPasswordStep.success),
         );
-      case FailureResult(failure: final failure):
+      case FailureResult(failure: final AuthFailure failure):
         emit(state.copyWith(isLoading: false, failure: failure));
     }
   }
@@ -154,8 +154,8 @@ class ForgotPasswordBloc
     _timerSubscription?.cancel();
     _timerSubscription = Stream<int>.periodic(
       const Duration(seconds: 1),
-      (x) => 59 - x,
-    ).take(60).listen((seconds) => add(ForgotPasswordTimerTicked(seconds)));
+      (int x) => 59 - x,
+    ).take(60).listen((int seconds) => add(ForgotPasswordTimerTicked(seconds)));
   }
 
   @override
