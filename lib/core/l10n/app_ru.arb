@@ -78,6 +78,5 @@
   "buttonContinue": "Продолжить",
   "buttonVerify": "Подтвердить",
   "buttonSavePassword": "Сохранить пароль",
-  "linkResendCode": "Отправить код повторно",
-  "resendCodeText": "Отправить код повторно через"
+  "linkResendCode": "Отправить код повторно"
 }

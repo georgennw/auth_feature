@@ -15,8 +15,8 @@ class OtpCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 56,
-      height: 56,
+      width: 46,
+      height: 46,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: const Color(0xFFF5F5F5),
@@ -30,7 +30,7 @@ class OtpCell extends StatelessWidget {
       ),
       child: Text(
         char,
-        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       ),
     );
   }

@@ -31,6 +31,8 @@ class AuthButton extends StatelessWidget {
                   borderRadius: BorderRadius.circular(100),
                 ),
                 elevation: 0,
+                disabledBackgroundColor: AppColors.buttonInactive,
+                shadowColor: Colors.transparent
               ),
               onPressed: isActive ? onPressed : null,
               child: Text(

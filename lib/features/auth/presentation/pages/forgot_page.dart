@@ -7,7 +7,6 @@ import 'package:auth/features/auth/presentation/bloc/forgot_state.dart';
 import 'package:auth/features/auth/presentation/utils/auth_fail_ext.dart';
 import 'package:auth/features/auth/presentation/widgets/auth_button.dart';
 import 'package:auth/features/auth/presentation/widgets/auth_text_field.dart';
-import 'package:auth/features/auth/presentation/widgets/error_banner.dart';
 import 'package:auth/features/auth/presentation/widgets/otp_cell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -75,16 +74,16 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           listener: (BuildContext context, ForgotPasswordState state) {
             if (state.step == ForgotPasswordStep.success) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10n.passwordResetSuccess), backgroundColor: const Color.fromARGB(255, 136, 132, 255),),
+                SnackBar(
+                  content: Text(l10n.passwordResetSuccess),
+                  backgroundColor: const Color.fromARGB(255, 136, 132, 255),
+                ),
               );
               Navigator.of(context).pop();
             }
           },
           builder: (BuildContext context, ForgotPasswordState state) {
             final bool isError = state.failure != null;
-            final String errorMessage = isError
-                ? state.failure!.toLocalizeString(context)
-                : '';
 
             return Column(
               children: <Widget>[
@@ -116,12 +115,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          // SizedBox(
-                          //   height: 92,
-                          //   child: isError
-                          //       ? ErrorBanner(message: errorMessage)
-                          //       : const SizedBox.shrink(),
-                          // ),
                           const SizedBox(height: 12),
                           if (state.step == ForgotPasswordStep.emailForm)
                             _EmailStepView(emailController: _emailController)
@@ -139,44 +132,48 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                               isLoading: state.isLoading,
                               isError: isError,
                             ),
+                          const SizedBox(height: 30),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 24.0,
+                              right: 24.0,
+                              bottom: 20.0,
+                              top: 10.0,
+                            ),
+                            child: AuthButton(
+                              text: state.step == ForgotPasswordStep.emailForm
+                                  ? l10n.buttonContinue
+                                  : state.step == ForgotPasswordStep.otpForm
+                                  ? l10n.buttonVerify
+                                  : l10n.buttonSavePassword,
+                              isLoading: state.isLoading,
+                              isActive: state.isButtonActive,
+                              onPressed: () {
+                                if (_formKey.currentState?.validate() ??
+                                    false) {
+                                  if (state.step ==
+                                      ForgotPasswordStep.emailForm) {
+                                    context.read<ForgotPasswordBloc>().add(
+                                      ForgotPasswordEmailSubmitted(),
+                                    );
+                                  } else if (state.step ==
+                                      ForgotPasswordStep.otpForm) {
+                                    context.read<ForgotPasswordBloc>().add(
+                                      ForgotPasswordOtpSubmitted(),
+                                    );
+                                  } else if (state.step ==
+                                      ForgotPasswordStep.resetPasswordForm) {
+                                    context.read<ForgotPasswordBloc>().add(
+                                      ForgotPasswordResetSubmitted(),
+                                    );
+                                  }
+                                }
+                              },
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 24.0,
-                    right: 24.0,
-                    bottom: 20.0,
-                    top: 10.0,
-                  ),
-                  child: AuthButton(
-                    text: state.step == ForgotPasswordStep.emailForm
-                        ? l10n.buttonContinue
-                        : state.step == ForgotPasswordStep.otpForm
-                        ? l10n.buttonVerify
-                        : l10n.buttonSavePassword,
-                    isLoading: state.isLoading,
-                    isActive: state.isButtonActive,
-                    onPressed: () {
-                      if (_formKey.currentState?.validate() ?? false) {
-                        if (state.step == ForgotPasswordStep.emailForm) {
-                          context.read<ForgotPasswordBloc>().add(
-                            ForgotPasswordEmailSubmitted(),
-                          );
-                        } else if (state.step == ForgotPasswordStep.otpForm) {
-                          context.read<ForgotPasswordBloc>().add(
-                            ForgotPasswordOtpSubmitted(),
-                          );
-                        } else if (state.step ==
-                            ForgotPasswordStep.resetPasswordForm) {
-                          context.read<ForgotPasswordBloc>().add(
-                            ForgotPasswordResetSubmitted(),
-                          );
-                        }
-                      }
-                    },
                   ),
                 ),
               ],
@@ -265,13 +262,16 @@ class _OtpStepView extends StatelessWidget {
                   ),
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(4, (int i) {
                     final bool isFocused = state.otp.length == i;
-                    return OtpCell(
-                      char: state.otp.length > i ? state.otp[i] : '',
-                      isFocused: isFocused,
-                      hasError: state.failure != null,
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: OtpCell(
+                        char: state.otp.length > i ? state.otp[i] : '',
+                        isFocused: isFocused,
+                        hasError: state.failure != null,
+                      ),
                     );
                   }),
                 ),
@@ -282,34 +282,43 @@ class _OtpStepView extends StatelessWidget {
         if (state.failure != null)
           Padding(
             padding: const EdgeInsets.only(top: 10),
-            child: Text(
-              state.failure!.toLocalizeString(context),
-              style: const TextStyle(color: AppColors.error, fontSize: 13),
+            child: Center(
+              child: Text(
+                state.failure!.toLocalizeString(context),
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: AppColors.error, fontSize: 13),
+              ),
             ),
           ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 22),
         Center(
-          child: state.isTimerRunning
-              ? Text(
-                  "${l10n.resendCodeText} 00:${state.timerSeconds.toString().padLeft(2, '0')}",
-                  style: const TextStyle(
-                    color: Color(0xFF949494),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: state.isTimerRunning
+                    ? null
+                    : () => context.read<ForgotPasswordBloc>().add(
+                        ForgotPasswordResendOtpRequested(),
+                      ),
+                child: Text(
+                  l10n.linkResendCode,
+                  style: TextStyle(
+                    color: state.isTimerRunning
+                        ? AppColors.buttonInactive
+                        : AppColors.buttonActive,
                     fontSize: 15,
-                  ),
-                )
-              : TextButton(
-                  onPressed: () => context.read<ForgotPasswordBloc>().add(
-                    ForgotPasswordResendOtpRequested(),
-                  ),
-                  child: Text(
-                    l10n.linkResendCode,
-                    style: const TextStyle(
-                      color: Color(0xFF007FFF),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                    ),
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                "00:${state.timerSeconds.toString().padLeft(2, '0')}",
+                style: const TextStyle(color: Color(0xFF949494), fontSize: 15),
+              ),
+            ],
+          ),
         ),
       ],
     );

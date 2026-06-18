@@ -23,6 +23,15 @@ class ForgotPasswordBloc
     on<ForgotPasswordResetSubmitted>(_onResetSubmitted);
     on<ForgotPasswordTimerTicked>(_onTimerTicked);
     on<ForgotPasswordReset>(_onReset);
+    on<ForgotPasswordTimerFinished>(_onTimerFinished);
+  }
+
+  void _onTimerFinished(
+    ForgotPasswordTimerFinished event,
+    Emitter<ForgotPasswordState> emit,
+  ) {
+    _timerSubscription?.cancel();
+    emit(state.copyWith(isTimerRunning: false, timerSeconds: 0));
   }
 
   void _onEmailChanged(
@@ -93,6 +102,7 @@ class ForgotPasswordBloc
             isLoading: false,
             step: ForgotPasswordStep.resetPasswordForm,
             isButtonActive: false,
+            clearFailure: true,
           ),
         );
       case FailureResult(failure: final AuthFailure failure):
@@ -167,22 +177,20 @@ class ForgotPasswordBloc
     emit(
       state.copyWith(
         isTimerRunning: true,
-        timerSeconds: 60,
+        timerSeconds: 59,
         timerEndTime: endTime,
       ),
     );
 
     _timerSubscription =
-        Stream<int>.periodic(
-          const Duration(seconds: 1),
-          (i) => i,
-        ).take(60).listen((_) {
+        Stream<int>.periodic(const Duration(seconds: 1), (i) => i).listen((_) {
           final remaining = endTime.difference(DateTime.now()).inSeconds;
-          add(
-            remaining > 0
-                ? ForgotPasswordTimerTicked(remaining)
-                : const ForgotPasswordTimerFinished(),
-          );
+
+          if (remaining <= 0) {
+            add(const ForgotPasswordTimerFinished());
+          } else {
+            add(ForgotPasswordTimerTicked(remaining));
+          }
         });
   }
 

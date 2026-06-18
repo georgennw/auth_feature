@@ -78,6 +78,5 @@
   "buttonContinue": "Continue",
   "buttonVerify": "Verify",
   "buttonSavePassword": "Save password",
-  "linkResendCode": "Resend code",
-  "resendCodeText": "Resend code in"
+  "linkResendCode": "Resend code"
 }
