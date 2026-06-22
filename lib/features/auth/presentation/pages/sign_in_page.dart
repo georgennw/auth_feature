@@ -181,7 +181,12 @@ class _FormSectionState extends State<_FormSection> {
             obscureText: !_showPassword,
             isError: widget.isError,
             textInputAction: TextInputAction.done,
-            validator: (String? value) => value.toPasswordError(context),
+            validator: (String? value) {
+              if (value == null || value.trim().isEmpty) {
+                return l10n.errorPasswordRequired;
+              }
+              return null;
+            },
             icon: IconButton(
               onPressed: widget.isLoading
                   ? null

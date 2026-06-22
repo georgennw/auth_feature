@@ -64,10 +64,8 @@
   "setNewPasswordSubtitle": "Create a new password that is different from previous ones.",
   
   "labelEmail": "Email",
-  "hintEmail": "example@mail.com",
   "labelNewPassword": "New password",
   "labelRepeatPassword": "Repeat password",
-  "hintPassword": "********",
   
   "errorOtpRequired": "Code is required",
   "errorOtpLength": "Code must be 4 digits",

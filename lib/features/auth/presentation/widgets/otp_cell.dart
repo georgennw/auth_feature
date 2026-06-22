@@ -19,7 +19,8 @@ class OtpCell extends StatelessWidget {
       height: 46,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
+        // color: const Color(0xFFF5F5F5),
+        color: Colors.transparent,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: hasError
@@ -30,7 +31,7 @@ class OtpCell extends StatelessWidget {
       ),
       child: Text(
         char,
-        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
       ),
     );
   }

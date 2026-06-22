@@ -21,7 +21,13 @@ class AuthButton extends StatelessWidget {
       width: double.infinity,
       height: 56,
       child: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  AppColors.buttonActive,
+                ),
+              ),
+            )
           : ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: isActive
@@ -32,7 +38,7 @@ class AuthButton extends StatelessWidget {
                 ),
                 elevation: 0,
                 disabledBackgroundColor: AppColors.buttonInactive,
-                shadowColor: Colors.transparent
+                shadowColor: Colors.transparent,
               ),
               onPressed: isActive ? onPressed : null,
               child: Text(

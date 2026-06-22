@@ -64,10 +64,8 @@
   "setNewPasswordSubtitle": "Создайте новый пароль, который отличается от предыдущих.",
   
   "labelEmail": "Email",
-  "hintEmail": "example@mail.com",
   "labelNewPassword": "Новый пароль",
   "labelRepeatPassword": "Повторите пароль",
-  "hintPassword": "********",
   
   "errorOtpRequired": "Код обязателен",
   "errorOtpLength": "Код должен состоять из 4 цифр",

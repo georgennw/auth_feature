@@ -27,6 +27,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
+  final FocusNode _otpFocusNode = FocusNode();
+
   @override
   void initState() {
     super.initState();
@@ -60,6 +62,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     _otpController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _otpFocusNode.dispose();
     super.dispose();
   }
 
@@ -75,8 +78,63 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             if (state.step == ForgotPasswordStep.success) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(l10n.passwordResetSuccess),
-                  backgroundColor: const Color.fromARGB(255, 136, 132, 255),
+                  behavior: SnackBarBehavior.floating,
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  duration: const Duration(seconds: 3),
+                  margin: const EdgeInsets.only(
+                    bottom: 24,
+                    left: 24,
+                    right: 24,
+                  ),
+                  content: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.08),
+                          blurRadius: 15,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                      border: Border.all(
+                        color: const Color(0xFFE0E0E0).withValues(alpha: 0.5),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFE8F5E9),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.check_circle,
+                            color: Color(0xFF2E7D32),
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            l10n.passwordResetSuccess,
+                            style: const TextStyle(
+                              color: Color(0xFF1A1A1A),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               );
               Navigator.of(context).pop();
@@ -90,13 +148,13 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 Align(
                   alignment: Alignment.topLeft,
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 24.0, top: 16.0),
+                    padding: const EdgeInsets.only(left: 10, top: 16),
                     child: IconButton(
                       onPressed: state.isLoading
                           ? null
                           : () => Navigator.of(context).pop(),
                       icon: const Icon(
-                        Icons.arrow_back_ios,
+                        Icons.arrow_back_ios_new,
                         color: AppColors.blue,
                       ),
                       padding: EdgeInsets.zero,
@@ -121,6 +179,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           else if (state.step == ForgotPasswordStep.otpForm)
                             _OtpStepView(
                               otpController: _otpController,
+                              otpFocusNode: _otpFocusNode,
                               state: state,
                             )
                           else if (state.step ==
@@ -133,43 +192,34 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                               isError: isError,
                             ),
                           const SizedBox(height: 30),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 24.0,
-                              right: 24.0,
-                              bottom: 20.0,
-                              top: 10.0,
-                            ),
-                            child: AuthButton(
-                              text: state.step == ForgotPasswordStep.emailForm
-                                  ? l10n.buttonContinue
-                                  : state.step == ForgotPasswordStep.otpForm
-                                  ? l10n.buttonVerify
-                                  : l10n.buttonSavePassword,
-                              isLoading: state.isLoading,
-                              isActive: state.isButtonActive,
-                              onPressed: () {
-                                if (_formKey.currentState?.validate() ??
-                                    false) {
-                                  if (state.step ==
-                                      ForgotPasswordStep.emailForm) {
-                                    context.read<ForgotPasswordBloc>().add(
-                                      ForgotPasswordEmailSubmitted(),
-                                    );
-                                  } else if (state.step ==
-                                      ForgotPasswordStep.otpForm) {
-                                    context.read<ForgotPasswordBloc>().add(
-                                      ForgotPasswordOtpSubmitted(),
-                                    );
-                                  } else if (state.step ==
-                                      ForgotPasswordStep.resetPasswordForm) {
-                                    context.read<ForgotPasswordBloc>().add(
-                                      ForgotPasswordResetSubmitted(),
-                                    );
-                                  }
+                          AuthButton(
+                            text: state.step == ForgotPasswordStep.emailForm
+                                ? l10n.buttonContinue
+                                : state.step == ForgotPasswordStep.otpForm
+                                ? l10n.buttonVerify
+                                : l10n.buttonSavePassword,
+                            isLoading: state.isLoading,
+                            isActive: state.isButtonActive,
+                            onPressed: () {
+                              if (_formKey.currentState?.validate() ?? false) {
+                                if (state.step ==
+                                    ForgotPasswordStep.emailForm) {
+                                  context.read<ForgotPasswordBloc>().add(
+                                    ForgotPasswordEmailSubmitted(),
+                                  );
+                                } else if (state.step ==
+                                    ForgotPasswordStep.otpForm) {
+                                  context.read<ForgotPasswordBloc>().add(
+                                    ForgotPasswordOtpSubmitted(),
+                                  );
+                                } else if (state.step ==
+                                    ForgotPasswordStep.resetPasswordForm) {
+                                  context.read<ForgotPasswordBloc>().add(
+                                    ForgotPasswordResetSubmitted(),
+                                  );
                                 }
-                              },
-                            ),
+                              }
+                            },
                           ),
                         ],
                       ),
@@ -225,7 +275,12 @@ class _EmailStepView extends StatelessWidget {
 class _OtpStepView extends StatelessWidget {
   final TextEditingController otpController;
   final ForgotPasswordState state;
-  const _OtpStepView({required this.otpController, required this.state});
+  final FocusNode otpFocusNode;
+  const _OtpStepView({
+    required this.otpController,
+    required this.state,
+    required this.otpFocusNode,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -247,35 +302,45 @@ class _OtpStepView extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Stack(
-              children: <Widget>[
-                Opacity(
-                  opacity: 0.0,
-                  child: AuthTextField(
-                    controller: otpController,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(4),
-                    ],
-                    autofocus: true,
+            GestureDetector(
+              onTap: () {
+                otpFocusNode.requestFocus();
+                SystemChannels.textInput.invokeMethod('TextInput.show');
+              },
+              behavior: HitTestBehavior.opaque,
+              child: Stack(
+                children: <Widget>[
+                  Opacity(
+                    opacity: 0.0,
+                    child: AuthTextField(
+                      controller: otpController,
+                      focusNode: otpFocusNode,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(4),
+                      ],
+                      autofocus: true,
+                    ),
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(4, (int i) {
-                    final bool isFocused = state.otp.length == i;
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: OtpCell(
-                        char: state.otp.length > i ? state.otp[i] : '',
-                        isFocused: isFocused,
-                        hasError: state.failure != null,
-                      ),
-                    );
-                  }),
-                ),
-              ],
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(4, (int i) {
+                      final bool isFocused =
+                          (state.otp.length == i) ||
+                          (state.otp.length == 4 && i == 3);
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: OtpCell(
+                          char: state.otp.length > i ? state.otp[i] : '',
+                          isFocused: isFocused,
+                          hasError: state.failure != null,
+                        ),
+                      );
+                    }),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -298,9 +363,12 @@ class _OtpStepView extends StatelessWidget {
               GestureDetector(
                 onTap: state.isTimerRunning
                     ? null
-                    : () => context.read<ForgotPasswordBloc>().add(
-                        ForgotPasswordResendOtpRequested(),
-                      ),
+                    : () {
+                        otpController.clear();
+                        context.read<ForgotPasswordBloc>().add(
+                          ForgotPasswordResendOtpRequested(),
+                        );
+                      },
                 child: Text(
                   l10n.linkResendCode,
                   style: TextStyle(
@@ -313,9 +381,16 @@ class _OtpStepView extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Text(
-                "00:${state.timerSeconds.toString().padLeft(2, '0')}",
-                style: const TextStyle(color: Color(0xFF949494), fontSize: 15),
+              SizedBox(
+                width: 45,
+                child: Text(
+                  "00:${state.timerSeconds.toString().padLeft(2, '0')}",
+                  style: const TextStyle(
+                    color: Color(0xFF949494),
+                    fontSize: 15,
+                    fontFeatures: [FontFeature.tabularFigures()],
+                  ),
+                ),
               ),
             ],
           ),

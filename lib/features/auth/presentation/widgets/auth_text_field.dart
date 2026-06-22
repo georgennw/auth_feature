@@ -15,6 +15,7 @@ class AuthTextField extends StatelessWidget {
   final String? Function(String?)? validator;
   final ValueChanged<String>? onChanged;
   final bool autofocus;
+  final FocusNode? focusNode;
 
   const AuthTextField({
     required this.controller,
@@ -29,6 +30,7 @@ class AuthTextField extends StatelessWidget {
     this.textInputAction,
     this.onChanged,
     this.autofocus = false,
+    this.focusNode,
     super.key,
   });
 
@@ -44,7 +46,9 @@ class AuthTextField extends StatelessWidget {
       onChanged: onChanged,
       textInputAction: textInputAction,
       autofocus: autofocus,
+      focusNode: focusNode,
       autovalidateMode: AutovalidateMode.onUserInteraction,
+      cursorColor: AppColors.blue,
       decoration: InputDecoration(
         hintText: hintText,
         suffixIcon: icon,
@@ -52,11 +56,25 @@ class AuthTextField extends StatelessWidget {
           horizontal: 16,
           vertical: 16,
         ),
+        filled: true,
+        fillColor: WidgetStateColor.resolveWith((states) {
+          if (states.contains(WidgetState.focused)) {
+            return AppColors.blue.withValues(alpha: 0.06);
+          }
+          if (isError) {
+            return AppColors.borderError.withValues(alpha: 0.03);
+          }
+          return AppColors.white;
+        }),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
             color: isError ? AppColors.borderError : AppColors.grey400,
           ),
+        ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.grey400),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),

@@ -12,6 +12,7 @@ class ForgotPasswordBloc
     extends Bloc<ForgotPasswordEvent, ForgotPasswordState> {
   final ForgotPasswordUseCase _useCase;
   StreamSubscription<int>? _timerSubscription;
+  String? _timerEmail;
 
   ForgotPasswordBloc(this._useCase) : super(const ForgotPasswordState()) {
     on<ForgotPasswordEmailChanged>(_onEmailChanged);
@@ -31,6 +32,7 @@ class ForgotPasswordBloc
     Emitter<ForgotPasswordState> emit,
   ) {
     _timerSubscription?.cancel();
+    _timerEmail = null;
     emit(state.copyWith(isTimerRunning: false, timerSeconds: 0));
   }
 
@@ -51,6 +53,21 @@ class ForgotPasswordBloc
     ForgotPasswordEmailSubmitted event,
     Emitter<ForgotPasswordState> emit,
   ) async {
+    if (state.isTimerRunning && _timerEmail == state.email) {
+      emit(
+        state.copyWith(
+          step: ForgotPasswordStep.otpForm,
+          isButtonActive: state.otp.length == 4,
+        ),
+      );
+      return;
+    }
+
+    if (state.isTimerRunning && _timerEmail != state.email) {
+      await _timerSubscription?.cancel();
+      _timerEmail = null;
+    }
+
     emit(state.copyWith(isLoading: true));
     final Result<void, AuthFailure> result = await _useCase.sendOtp(
       state.email,
@@ -62,7 +79,7 @@ class ForgotPasswordBloc
           state.copyWith(
             isLoading: false,
             step: ForgotPasswordStep.otpForm,
-            isButtonActive: false,
+            isButtonActive: state.otp.length == 4,
           ),
         );
         _startTimer(emit);
@@ -116,7 +133,14 @@ class ForgotPasswordBloc
   ) {
     if (state.isTimerRunning) return;
 
-    emit(state.copyWith(isLoading: true));
+    emit(
+      state.copyWith(
+        isLoading: true,
+        otp: '',
+        isButtonActive: false,
+        clearFailure: true,
+      ),
+    );
 
     _useCase.sendOtp(state.email);
     _startTimer(emit);
@@ -172,6 +196,8 @@ class ForgotPasswordBloc
 
   void _startTimer(Emitter<ForgotPasswordState> emit) {
     _timerSubscription?.cancel();
+    _timerEmail = state.email;
+
     final endTime = DateTime.now().add(const Duration(seconds: 60));
 
     emit(
@@ -199,8 +225,14 @@ class ForgotPasswordBloc
     _timerSubscription?.cancel();
     return super.close();
   }
-}
 
-void _onReset(ForgotPasswordReset event, Emitter<ForgotPasswordState> emit) {
-  emit(const ForgotPasswordState());
+  void _onReset(ForgotPasswordReset event, Emitter<ForgotPasswordState> emit) {
+    emit(
+      ForgotPasswordState(
+        isTimerRunning: state.isTimerRunning,
+        timerSeconds: state.timerSeconds,
+        timerEndTime: state.timerEndTime,
+      ),
+    );
+  }
 }

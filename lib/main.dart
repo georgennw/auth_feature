@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:auth/core/l10n/app_localizations.dart';
+import 'package:auth/core/theme/app_colors.dart';
 import 'package:auth/core/utils/result.dart';
 import 'package:auth/features/auth/domain/entities/user.dart';
 import 'package:auth/features/auth/domain/failure/auth_failure.dart';
@@ -66,16 +67,17 @@ void main() async {
                 ForgotPasswordBloc(context.read<ForgotPasswordUseCase>()),
           ),
         ],
-        child: const MaterialApp(
+        child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          localizationsDelegates: <LocalizationsDelegate<dynamic>>[
+          localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: <Locale>[Locale('en', ''), Locale('ru', '')],
-          home: SignInPage(),
+          supportedLocales: const <Locale>[Locale('en', ''), Locale('ru', '')],
+          theme: ThemeData(colorSchemeSeed: AppColors.buttonInactive),
+          home: const SignInPage(),
         ),
       ),
     ),

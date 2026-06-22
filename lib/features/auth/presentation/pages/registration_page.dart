@@ -7,7 +7,6 @@ import 'package:auth/features/auth/presentation/bloc/registration_state.dart';
 import 'package:auth/features/auth/presentation/utils/auth_fail_ext.dart';
 import 'package:auth/features/auth/presentation/widgets/auth_button.dart';
 import 'package:auth/features/auth/presentation/widgets/auth_text_field.dart';
-import 'package:auth/features/auth/presentation/widgets/error_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -77,12 +76,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 Align(
                   alignment: Alignment.topLeft,
                   child: Padding(
-                    padding: const EdgeInsetsGeometry.only(left: 24, top: 16),
+                    padding: const EdgeInsetsGeometry.only(left: 10, top: 16),
                     child: IconButton(
                       onPressed: state is RegistrationLoading
                           ? null
                           : () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.arrow_back_ios, color: Colors.blue),
+                      icon: const Icon(
+                        Icons.arrow_back_ios_new,
+                        color: Colors.blue,
+                      ),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
                     ),
@@ -187,13 +189,13 @@ class _FormSectionState extends State<_FormSection> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          SizedBox(
-            height: 26,
-            child: widget.isError
-                ? ErrorBanner(message: widget.errorMessage)
-                : null,
-          ),
-          const SizedBox(height: 24),
+          // SizedBox(
+          //   height: 26,
+          //   child: widget.isError
+          //       ? ErrorBanner(message: widget.errorMessage)
+          //       : null,
+          // ),
+          // const SizedBox(height: 24),
           Text(
             l10n.providePersonalInfo,
             style: const TextStyle(
