@@ -7,9 +7,8 @@ import 'package:auth/features/auth/presentation/bloc/forgot_state.dart';
 import 'package:auth/features/auth/presentation/utils/auth_fail_ext.dart';
 import 'package:auth/features/auth/presentation/widgets/auth_button.dart';
 import 'package:auth/features/auth/presentation/widgets/auth_text_field.dart';
-import 'package:auth/features/auth/presentation/widgets/otp_cell.dart';
+import 'package:auth/features/auth/presentation/widgets/otp_code_field.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
@@ -104,7 +103,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       ],
                       border: Border.all(
                         color: const Color(0xFFE0E0E0).withValues(alpha: 0.5),
-                        width: 1,
                       ),
                     ),
                     child: Row(
@@ -299,51 +297,7 @@ class _OtpStepView extends StatelessWidget {
           style: const TextStyle(fontSize: 15, color: Color(0xFF949494)),
         ),
         const SizedBox(height: 40),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            GestureDetector(
-              onTap: () {
-                otpFocusNode.requestFocus();
-                SystemChannels.textInput.invokeMethod('TextInput.show');
-              },
-              behavior: HitTestBehavior.opaque,
-              child: Stack(
-                children: <Widget>[
-                  Opacity(
-                    opacity: 0.0,
-                    child: AuthTextField(
-                      controller: otpController,
-                      focusNode: otpFocusNode,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(4),
-                      ],
-                      autofocus: true,
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(4, (int i) {
-                      final bool isFocused =
-                          (state.otp.length == i) ||
-                          (state.otp.length == 4 && i == 3);
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: OtpCell(
-                          char: state.otp.length > i ? state.otp[i] : '',
-                          isFocused: isFocused,
-                          hasError: state.failure != null,
-                        ),
-                      );
-                    }),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+        OtpCodeField(controller: otpController, focusNode: otpFocusNode),
         if (state.failure != null)
           Padding(
             padding: const EdgeInsets.only(top: 10),
