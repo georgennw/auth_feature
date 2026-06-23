@@ -22,3 +22,7 @@ class UserNotFoundFailure extends AuthFailure {
 class NetworkFailure extends AuthFailure {
   const NetworkFailure();
 }
+
+class InvalidOtpFailure extends AuthFailure {
+  const InvalidOtpFailure();
+}

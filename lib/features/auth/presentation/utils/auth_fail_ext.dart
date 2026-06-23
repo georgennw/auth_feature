@@ -11,6 +11,7 @@ extension AuthFailureL10n on AuthFailure {
       EmailAlreadyInUseFailure() => l10n.serverErrorEmailAlreadyInUse,
       UserNotFoundFailure() => l10n.serverErrorUserNotFound,
       NetworkFailure() => l10n.serverErrorNetwork,
+      InvalidOtpFailure() => l10n.invalidOtp,
     };
   }
 }

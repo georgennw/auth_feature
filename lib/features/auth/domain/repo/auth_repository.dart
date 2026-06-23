@@ -15,4 +15,15 @@ abstract interface class AuthRepository {
     required String gender,
     required String age,
   });
+
+  Future<Result<void, AuthFailure>> sendRecoveryOtp(String email);
+  Future<Result<void, AuthFailure>> verifyRecoveryOtp(
+    String email,
+    String code,
+  );
+  Future<Result<void, AuthFailure>> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+  });
 }

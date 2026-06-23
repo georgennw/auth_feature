@@ -1,12 +1,15 @@
 import 'dart:ui';
 
 import 'package:auth/core/l10n/app_localizations.dart';
+import 'package:auth/core/theme/app_colors.dart';
 import 'package:auth/core/utils/result.dart';
 import 'package:auth/features/auth/domain/entities/user.dart';
 import 'package:auth/features/auth/domain/failure/auth_failure.dart';
 import 'package:auth/features/auth/domain/repo/auth_repository.dart';
+import 'package:auth/features/auth/domain/usecases/forgot_usecase.dart';
 import 'package:auth/features/auth/domain/usecases/register_usecase.dart';
 import 'package:auth/features/auth/domain/usecases/sign_in_usecases.dart';
+import 'package:auth/features/auth/presentation/bloc/forgot_bloc.dart';
 import 'package:auth/features/auth/presentation/bloc/registration_bloc.dart';
 import 'package:auth/features/auth/presentation/bloc/sign_in_bloc.dart';
 import 'package:auth/features/auth/presentation/pages/sign_in_page.dart';
@@ -35,6 +38,9 @@ void main() async {
   final MockAuthRepository authRepository = MockAuthRepository();
   final SignInUseCase signInUseCase = SignInUseCase(authRepository);
   final RegisterUseCase registerUseCase = RegisterUseCase(authRepository);
+  final ForgotPasswordUseCase forgotPasswordUseCase = ForgotPasswordUseCase(
+    authRepository,
+  );
 
   runApp(
     MultiRepositoryProvider(
@@ -42,6 +48,9 @@ void main() async {
         RepositoryProvider<AuthRepository>.value(value: authRepository),
         RepositoryProvider<SignInUseCase>.value(value: signInUseCase),
         RepositoryProvider<RegisterUseCase>.value(value: registerUseCase),
+        RepositoryProvider<ForgotPasswordUseCase>.value(
+          value: forgotPasswordUseCase,
+        ),
       ],
       child: MultiBlocProvider(
         providers: <SingleChildWidget>[
@@ -53,17 +62,22 @@ void main() async {
             create: (BuildContext context) =>
                 RegistrationBloc(context.read<RegisterUseCase>()),
           ),
+          BlocProvider(
+            create: (BuildContext context) =>
+                ForgotPasswordBloc(context.read<ForgotPasswordUseCase>()),
+          ),
         ],
-        child: const MaterialApp(
+        child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          localizationsDelegates: <LocalizationsDelegate<dynamic>>[
+          localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: <Locale>[Locale('en', ''), Locale('ru', '')],
-          home: SignInPage(),
+          supportedLocales: const <Locale>[Locale('en', ''), Locale('ru', '')],
+          theme: ThemeData(colorSchemeSeed: AppColors.buttonInactive),
+          home: const SignInPage(),
         ),
       ),
     ),
@@ -102,5 +116,42 @@ class MockAuthRepository implements AuthRepository {
       return FailureResult(const EmailAlreadyInUseFailure());
     }
     return Success(User(email: email, password: pass));
+  }
+
+  @override
+  Future<Result<void, AuthFailure>> verifyRecoveryOtp(
+    String email,
+    String code,
+  ) async {
+    await Future.delayed(const Duration(seconds: 1));
+    if (email == 'network@test.com') {
+      return FailureResult(const NetworkFailure());
+    }
+    if (code == '0000') {
+      return FailureResult(const InvalidOtpFailure());
+    }
+    return Success(null);
+  }
+
+  @override
+  Future<Result<void, AuthFailure>> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+  }) async {
+    await Future.delayed(const Duration(seconds: 1));
+    if (email == 'network@test.com') {
+      return FailureResult(const NetworkFailure());
+    }
+    return Success(null);
+  }
+  
+  @override
+  Future<Result<void, AuthFailure>> sendRecoveryOtp(String email) async {
+    await Future.delayed(const Duration(seconds: 1));
+    if (email == 'network@test.com') {
+      return FailureResult(const NetworkFailure());
+    }
+    return Success(null);
   }
 }

@@ -54,5 +54,27 @@
   "serverErrorEmailAlreadyInUse": "Этот Email уже зарегистрирован в системе",
   "serverErrorUserNotFound": "Пользователь с таким Email не найден",
   "serverErrorNetwork": "Ошибка сети. Проверьте подключение к интернету",
-  "serverErrorUnknown": "Что-то пошло не так. Повторите попытку позже"
+  "serverErrorUnknown": "Что-то пошло не так. Повторите попытку позже",
+
+  "forgotPasswordTitle": "Забыли пароль?",
+  "forgotPasswordSubtitle": "Введите ваш email, и мы отправим код для восстановления пароля.",
+  "enterCodeTitle": "Введите код",
+  "enterCodeSubtitle": "Код подтверждения был отправлен на ваш email. Введите его ниже.",
+  "setNewPasswordTitle": "Установите новый пароль",
+  "setNewPasswordSubtitle": "Создайте новый пароль, который отличается от предыдущих.",
+  
+  "labelEmail": "Email",
+  "labelNewPassword": "Новый пароль",
+  "labelRepeatPassword": "Повторите пароль",
+  
+  "errorOtpRequired": "Код обязателен",
+  "errorOtpLength": "Код должен состоять из 4 цифр",
+  "invalidOtp": "Неверный код",
+  "errorPasswordsDoNotMatch": "Пароли не совпадают",
+  "passwordResetSuccess": "Пароль успешно обновлен!",
+  
+  "buttonContinue": "Продолжить",
+  "buttonVerify": "Подтвердить",
+  "buttonSavePassword": "Сохранить пароль",
+  "linkResendCode": "Отправить код повторно"
 }
